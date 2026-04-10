@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+@page {
+    size: A4;
+    margin: 20mm 18mm 25mm 18mm;
+    @top-right {
+        content: "CONFIDENTIAL";
+        font-size: 7pt;
+        color: #94a3b8;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+    @bottom-center {
+        content: counter(page) " / " counter(pages);
+        font-size: 8pt;
+        color: #64748b;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+    @bottom-left {
+        content: "vajra deterministic analysis";
+        font-size: 7pt;
+        color: #94a3b8;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+}
+
+@page :first {
+    margin-top: 0;
+    @top-right { content: none; }
+    @bottom-center { content: none; }
+    @bottom-left { content: none; }
+}
+
+:root {
+    --purple: #8b5cf6;
+    --blue: #3b82f6;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --green: #22c55e;
+    --slate-50: #f8fafc;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-300: #cbd5e1;
+    --slate-400: #94a3b8;
+    --slate-500: #64748b;
+    --slate-600: #475569;
+    --slate-700: #334155;
+    --slate-800: #1e293b;
+    --slate-900: #0f172a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 9pt;
+    line-height: 1.5;
+    color: var(--slate-800);
+    background: white;
+}
+
+/* === COVER PAGE === */
+.cover {
+    page-break-after: always;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #312e81 100%);
+    color: white;
+    margin: -20mm -18mm 0 -18mm;
+    padding: 40mm 30mm;
+}
+
+.cover-logo { width: 280px; margin-bottom: 30px; filter: brightness(2); }
+.cover h1 {
+    font-size: 36pt;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #c084fc, #60a5fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+}
+.cover h2 {
+    font-size: 14pt;
+    font-weight: 400;
+    color: #94a3b8;
+    margin-bottom: 40px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+.cover-meta {
+    font-size: 9pt;
+    color: #64748b;
+    line-height: 2;
+}
+.cover-meta strong { color: #94a3b8; }
+.cover-divider {
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+    margin: 30px auto;
+    border-radius: 1px;
+}
+.cover-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border: 1px solid #4c1d95;
+    border-radius: 20px;
+    font-size: 7.5pt;
+    color: #a78bfa;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 20px;
+}
+
+/* === SECTIONS === */
+.section { page-break-before: always; }
+.section:first-of-type { page-break-before: auto; }
+.section-continue { page-break-before: avoid; }
+
+table { page-break-inside: auto; }
+tr { page-break-inside: avoid; }
+thead { display: table-header-group; }
+.callout { page-break-inside: avoid; }
+.stat-grid { page-break-inside: avoid; }
+.health-item { page-break-inside: avoid; }
+
+h1 {
+    font-size: 20pt;
+    font-weight: 800;
+    color: var(--slate-900);
+    letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+    padding-bottom: 8px;
+    border-bottom: 3px solid;
+    border-image: linear-gradient(90deg, var(--purple), var(--blue)) 1;
+}
+
+h2 {
+    font-size: 13pt;
+    font-weight: 700;
+    color: var(--slate-800);
+    margin: 18px 0 8px 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--slate-200);
+}
+
+h3 {
+    font-size: 10pt;
+    font-weight: 700;
+    color: var(--slate-700);
+    margin: 14px 0 6px 0;
+}
+
+p { margin: 6px 0; color: var(--slate-700); }
+
+/* === TABLES === */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 16px 0;
+    font-size: 8pt;
+}
+
+thead th {
+    background: var(--slate-800);
+    color: white;
+    font-weight: 600;
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 6px 8px;
+    text-align: left;
+    border: none;
+}
+
+tbody td {
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--slate-100);
+    vertical-align: middle;
+}
+
+tbody tr:nth-child(even) { background: var(--slate-50); }
+tbody tr:hover { background: #ede9fe; }
+
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 7.5pt; }
+.dim { color: var(--slate-400); }
+.label-cell { font-weight: 500; max-width: 200px; }
+
+/* === GRADE COLORS === */
+.grade-a { color: var(--green); }
+.grade-b { color: var(--blue); }
+.grade-c { color: var(--amber); }
+.grade-f { color: var(--red); }
+.winner { font-weight: 700; }
+
+/* === TAGS === */
+.tag {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 6.5pt;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.source-effect { background: #ede9fe; color: #6d28d9; }
+.source-v8\/node, .source-v8 { background: #fef3c7; color: #92400e; }
+.source-benchmark { background: #dcfce7; color: #166534; }
+
+/* === BARS === */
+.bar {
+    height: 10px;
+    background: linear-gradient(90deg, var(--purple), var(--blue));
+    border-radius: 2px;
+    min-width: 2px;
+}
+
+/* === CALLOUT BOXES === */
+.callout {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 12px 0;
+    font-size: 8.5pt;
+}
+.callout-critical {
+    background: #fef2f2;
+    border-left: 4px solid var(--red);
+}
+.callout-warning {
+    background: #fffbeb;
+    border-left: 4px solid var(--amber);
+}
+.callout-info {
+    background: #eff6ff;
+    border-left: 4px solid var(--blue);
+}
+.callout-good {
+    background: #f0fdf4;
+    border-left: 4px solid var(--green);
+}
+.callout strong { display: block; margin-bottom: 4px; }
+
+/* === HEALTH CARD === */
+.health-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 12px 0;
+}
+.health-item {
+    padding: 10px 14px;
+    border-radius: 6px;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+}
+.health-item .metric {
+    font-size: 22pt;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+}
+.health-item .label {
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--slate-500);
+    margin-top: 2px;
+}
+
+/* === STAT ROW === */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+}
+.stat-box {
+    text-align: center;
+    padding: 10px;
+    background: var(--slate-50);
+    border-radius: 6px;
+    border: 1px solid var(--slate-200);
+}
+.stat-box .val {
+    font-size: 18pt;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+.stat-box .desc {
+    font-size: 6.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--slate-500);
+    margin-top: 2px;
+}
+
+/* === COLUMNS === */
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* === CHART-LIKE === */
+.hbar-row {
+    display: flex;
+    align-items: center;
+    margin: 3px 0;
+    font-size: 7.5pt;
+}
+.hbar-label {
+    width: 120px;
+    text-align: right;
+    padding-right: 8px;
+    font-weight: 500;
+    color: var(--slate-600);
+    white-space: nowrap;
+    overflow: hidden;
+}
+.hbar-track {
+    flex: 1;
+    height: 14px;
+    background: var(--slate-100);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.hbar-fill {
+    height: 100%;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    padding-left: 6px;
+    font-size: 6.5pt;
+    font-weight: 600;
+    color: white;
+}
+.hbar-fill.purple { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+.hbar-fill.blue { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.hbar-fill.amber { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.hbar-fill.red { background: linear-gradient(90deg, #ef4444, #f87171); }
+.hbar-fill.green { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.hbar-fill.slate { background: linear-gradient(90deg, #64748b, #94a3b8); }
+
+.page-break { page-break-before: always; }
+.no-orphan { page-break-inside: avoid; }
+
+/* Tighten for print */
+@media print {
+    body { font-size: 8.5pt; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER ==================== -->
+<div class="cover">
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgNjAiIGZpbGw9Im5vbmUiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJlZmZlY3RHcmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM4YjVjZjYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojM2I4MmY2Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyNCIgZmlsbD0idXJsKCNlZmZlY3RHcmFkKSIgb3BhY2l0eT0iMC4xNSIvPgogIDxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjE2IiBmaWxsPSJ1cmwoI2VmZmVjdEdyYWQpIiBvcGFjaXR5PSIwLjMiLz4KICA8Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSI4IiBmaWxsPSJ1cmwoI2VmZmVjdEdyYWQpIi8+CiAgPHRleHQgeD0iNjUiIHk9IjQwIiBmb250LWZhbWlseT0ic3lzdGVtLXVpLCAtYXBwbGUtc3lzdGVtLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjMyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSJ1cmwoI2VmZmVjdEdyYWQpIj5FZmZlY3Q8L3RleHQ+Cjwvc3ZnPgo=" class="cover-logo" alt="Effect">
+    <h1>Deep Analysis Report</h1>
+    <h2>Health &middot; Governance &middot; Performance</h2>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+        <strong>Repository:</strong> Effect-TS/effect<br>
+        <strong>Stars:</strong> 13,799 &nbsp;&middot;&nbsp; <strong>Packages:</strong> 31 &nbsp;&middot;&nbsp; <strong>Contributors:</strong> 88<br>
+        <strong>Data Sources:</strong> 800 commits &middot; 500 PRs &middot; 1,202 issues &middot; 172 reviews &middot; 100 releases<br>
+        <strong>Analysis Date:</strong> April 9, 2026
+    </div>
+    <div class="cover-badge">Powered by vajra &mdash; deterministic semantic reduction</div>
+</div>
+
+<!-- ==================== EXECUTIVE SUMMARY ==================== -->
+<div class="page-break"></div>
+<h1>Executive Summary</h1>
+
+<div class="stat-grid">
+    <div class="stat-box">
+        <div class="val grade-f">D+</div>
+        <div class="desc">Overall Health</div>
+    </div>
+    <div class="stat-box">
+        <div class="val grade-f">3.45</div>
+        <div class="desc">Commit Entropy (bits)</div>
+    </div>
+    <div class="stat-box">
+        <div class="val grade-c">87x</div>
+        <div class="desc">Merge Speed Gap</div>
+    </div>
+    <div class="stat-box">
+        <div class="val grade-f">59%</div>
+        <div class="desc">1-Commit Churn Rate</div>
+    </div>
+</div>
+
+<p>Effect-TS is a <strong>brilliant but fragile</strong> TypeScript framework. It offers world-class developer ergonomics &mdash; composable effects, typed errors, structured concurrency &mdash; but the project's operational health tells a different story. This report quantifies every dimension using <strong>vajra's</strong> deterministic information-theoretic analysis across 8 data sources.</p>
+
+<div class="callout callout-critical">
+    <strong>Critical Finding: Single Point of Failure</strong>
+    One contributor (Tim Smart) writes 33% of all code, performs 60% of all reviews, and merges PRs in a median of 13 minutes with no external review. The project's bus factor is 1.
+</div>
+
+<h2>Health Scorecard</h2>
+<table>
+<thead><tr><th>Dimension</th><th>Grade</th><th>Key Metric</th><th>vajra Signal</th></tr></thead>
+<tbody>
+<tr><td>Bus Factor</td><td class="grade-f"><strong>F</strong></td><td>1 person = 33% code, 60% reviews</td><td>Commit entropy 3.45 bits</td></tr>
+<tr><td>Review Quality</td><td class="grade-f"><strong>D</strong></td><td>71% of PRs ship unreviewed</td><td>Review count z_mad = 23.6</td></tr>
+<tr><td>Contributor Retention</td><td class="grade-f"><strong>D</strong></td><td>59% make 1 commit and vanish</td><td>Net growth -1.08/month</td></tr>
+<tr><td>Merge Equity</td><td class="grade-c"><strong>D+</strong></td><td>Core 91.4% vs community 45.9%</td><td>JSD = 0.788</td></tr>
+<tr><td>Issue Response</td><td class="grade-c"><strong>C-</strong></td><td>41% zero-comment issues</td><td>Zero-comment rate 14%&rarr;55%</td></tr>
+<tr><td>Code Stability</td><td class="grade-c"><strong>C</strong></td><td>Core pkg 20% fix ratio</td><td>z_mad = 7.73</td></tr>
+<tr><td>Package Coupling</td><td class="grade-c"><strong>C-</strong></td><td>Median 69 co-changes</td><td>MAD = 4</td></tr>
+<tr><td>Community Size</td><td class="grade-b"><strong>B-</strong></td><td>236 issue authors, 119 PR authors</td><td>Issue entropy 6.61</td></tr>
+<tr><td>Burnout Management</td><td class="grade-f"><strong>F</strong></td><td>3/3 burned-out contributors departed</td><td>Late-night z_mad = 4.98</td></tr>
+<tr><td>Velocity Trend</td><td class="grade-f"><strong>D</strong></td><td>132 &rarr; 18 commits/month</td><td>Declining 7 months</td></tr>
+</tbody>
+</table>
+
+<!-- ==================== POWER STRUCTURE ==================== -->
+<div class="page-break"></div>
+<h1>The Power Structure</h1>
+
+<h2>Commit Authorship (800 commits)</h2>
+
+<table>
+<thead><tr><th>Author</th><th>Commits</th><th>Share</th><th>Distribution</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td><strong>Tim Smart</strong></td><td class="num">263</td><td class="num grade-f"><strong>32.9%</strong></td><td><div class="bar" style="width:66%; background: linear-gradient(90deg, #8b5cf6, #a78bfa);"></div></td><td>De facto BDFL</td></tr>
+<tr><td>github-actions</td><td class="num">252</td><td class="num">31.5%</td><td><div class="bar" style="width:63%; background: linear-gradient(90deg, #64748b, #94a3b8);"></div></td><td>CI automation</td></tr>
+<tr><td><strong>Maxwell Brown</strong></td><td class="num">55</td><td class="num">6.9%</td><td><div class="bar" style="width:14%; background: linear-gradient(90deg, #3b82f6, #60a5fa);"></div></td><td>Lieutenant</td></tr>
+<tr><td>Giulio Canti</td><td class="num">22</td><td class="num">2.8%</td><td><div class="bar" style="width:5.5%; background: linear-gradient(90deg, #3b82f6, #60a5fa);"></div></td><td>Founder (semi-retired)</td></tr>
+<tr><td>Michael Arnaldi</td><td class="num">17</td><td class="num">2.1%</td><td><div class="bar" style="width:4.2%; background: linear-gradient(90deg, #3b82f6, #60a5fa);"></div></td><td>Founder (community voice)</td></tr>
+<tr><td>Maxim Khramtsov</td><td class="num">17</td><td class="num">2.1%</td><td><div class="bar" style="width:4.2%; background: linear-gradient(90deg, #ef4444, #f87171);"></div></td><td class="grade-f">Departed (30/31 pkgs)</td></tr>
+<tr><td class="dim">Other 82 authors</td><td class="num">174</td><td class="num">21.8%</td><td><div class="bar" style="width:44%; background: linear-gradient(90deg, #22c55e, #4ade80);"></div></td><td>Community (59% one-commit)</td></tr>
+</tbody>
+</table>
+
+<h2>The Split Governance Model</h2>
+<p>Effect-TS has an unusual governance split. The person who writes the code is not the person who talks to the community.</p>
+
+<table>
+<thead><tr><th>Activity</th><th>mikearnaldi</th><th>tim-smart</th><th>gcanti</th><th>IMax153</th></tr></thead>
+<tbody>
+<tr><td><strong>Issue comments</strong></td><td class="grade-a"><strong>184 (1st)</strong></td><td>48 (4th)</td><td>74 (2nd)</td><td>28 (7th)</td></tr>
+<tr><td><strong>First responder</strong></td><td class="grade-a"><strong>37 issues</strong></td><td>16</td><td>21</td><td>9</td></tr>
+<tr><td><strong>Commits</strong></td><td>17</td><td class="grade-a"><strong>263 (1st)</strong></td><td>22</td><td>55</td></tr>
+<tr><td><strong>PR reviews</strong></td><td>0</td><td class="grade-a"><strong>73 (1st)</strong></td><td>8</td><td>18</td></tr>
+<tr><td><strong>Packages touched</strong></td><td>6</td><td class="grade-a"><strong>26</strong></td><td>3</td><td>21</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-warning">
+    <strong>Governance Disconnect</strong>
+    Arnaldi (community voice, 184 issue comments) rarely writes code. Tim (code authority, 263 commits) rarely engages with issues. The person who knows what the community needs is not the person who builds it.
+</div>
+
+<h2>The Entropy Dashboard</h2>
+<p>Shannon entropy measures contributor diversity. Higher = more distributed. The gap between issue entropy and commit entropy quantifies the <strong>trust asymmetry</strong>: community demand outpacing production capacity.</p>
+
+<table>
+<thead><tr><th>Data Source</th><th>Author Entropy (bits)</th><th>Unique Authors</th><th>Interpretation</th></tr></thead>
+<tbody>
+<tr><td>Issues (1,202)</td><td class="grade-a"><strong>6.61</strong></td><td>236</td><td>Healthy &mdash; broad community</td></tr>
+<tr><td>Pull Requests (500)</td><td class="grade-c"><strong>4.62</strong></td><td>119</td><td>Moderate &mdash; core team dominant</td></tr>
+<tr><td>Commits (800)</td><td class="grade-f"><strong>3.45</strong></td><td>88</td><td>Concentrated &mdash; single-maintainer territory</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info">
+    <strong>The 3.16-bit entropy gap</strong> between issues (6.61) and commits (3.45) is the quantitative signature of a trust deficit. The community trusts Effect enough to depend on it and file issues, but the project lacks the contributor base to match that demand.
+</div>
+
+<h2 style="page-break-before: always;">Governance Timeline</h2>
+<table style="font-size: 7.5pt;">
+<thead><tr><th>Month</th><th>Commits</th><th>Authors</th><th>Bus Factor (80%)</th><th>Top Author</th><th>Top Share</th></tr></thead>
+<tbody>
+<tr>
+        <td class="mono">2025-03</td>
+        <td class="num">1</td>
+        <td class="num">1</td>
+        <td class="num grade-f"><strong>1</strong></td>
+        <td>Vincent François</td>
+        <td class="num grade-f">100%</td>
+    </tr>
+<tr>
+        <td class="mono">2025-04</td>
+        <td class="num">9</td>
+        <td class="num">4</td>
+        <td class="num grade-c"><strong>3</strong></td>
+        <td>Maxim Khramtsov</td>
+        <td class="num grade-c">44%</td>
+    </tr>
+<tr>
+        <td class="mono">2025-05</td>
+        <td class="num">91</td>
+        <td class="num">19</td>
+        <td class="num grade-a"><strong>7</strong></td>
+        <td>Tim</td>
+        <td class="num grade-c">32%</td>
+    </tr>
+<tr>
+        <td class="mono">2025-06</td>
+        <td class="num">112</td>
+        <td class="num">11</td>
+        <td class="num grade-f"><strong>2</strong></td>
+        <td>Tim</td>
+        <td class="num grade-f">51%</td>
+    </tr>
+<tr>
+        <td class="mono">2025-07</td>
+        <td class="num">132</td>
+        <td class="num">29</td>
+        <td class="num grade-a"><strong>7</strong></td>
+        <td>Tim</td>
+        <td class="num grade-c">35%</td>
+    </tr>
+<tr>
+        <td class="mono">2025-08</td>
+        <td class="num">78</td>
+        <td class="num">18</td>
+        <td class="num grade-a"><strong>7</strong></td>
+        <td>github-actions[bot]</td>
+        <td class="num grade-c">32%</td>
+    </tr>
+<tr>
+        <td class="mono">2025-09</td>
+        <td class="num">104</td>
+        <td class="num">10</td>
+        <td class="num grade-c"><strong>3</strong></td>
+        <td>github-actions[bot]</td>
+        <td class="num grade-c">43%</td>
+    </tr>
+<tr>
+        <td class="mono">2025-10</td>
+        <td class="num">47</td>
+        <td class="num">14</td>
+        <td class="num grade-a"><strong>6</strong></td>
+        <td>github-actions[bot]</td>
+        <td class="num grade-c">34%</td>
+    </tr>
+<tr>
+        <td class="mono">2025-11</td>
+        <td class="num">105</td>
+        <td class="num">15</td>
+        <td class="num grade-f"><strong>2</strong></td>
+        <td>Tim</td>
+        <td class="num grade-c">46%</td>
+    </tr>
+<tr>
+        <td class="mono">2025-12</td>
+        <td class="num">44</td>
+        <td class="num">16</td>
+        <td class="num grade-a"><strong>8</strong></td>
+        <td>github-actions[bot]</td>
+        <td class="num grade-a">20%</td>
+    </tr>
+<tr>
+        <td class="mono">2026-01</td>
+        <td class="num">24</td>
+        <td class="num">19</td>
+        <td class="num grade-a"><strong>15</strong></td>
+        <td>github-actions[bot]</td>
+        <td class="num grade-a">25%</td>
+    </tr>
+<tr>
+        <td class="mono">2026-02</td>
+        <td class="num">35</td>
+        <td class="num">11</td>
+        <td class="num grade-a"><strong>6</strong></td>
+        <td>Tim</td>
+        <td class="num grade-c">31%</td>
+    </tr>
+<tr>
+        <td class="mono">2026-03</td>
+        <td class="num">18</td>
+        <td class="num">13</td>
+        <td class="num grade-a"><strong>10</strong></td>
+        <td>github-actions[bot]</td>
+        <td class="num grade-a">22%</td>
+    </tr>
+
+</tbody>
+</table>
+
+<div class="callout callout-critical">
+    <strong>The Tim Paradox</strong>
+    When Tim pushes hard, bus factor collapses to 2 (everyone else defers). When Tim steps back, bus factor recovers to 10-15 as the community fills in. His presence paradoxically <strong>weakens</strong> governance breadth. Velocity is also declining: 132 &rarr; 18 commits/month over the last 7 months.
+</div>
+
+<h2>Core Team Merge Speed</h2>
+<table>
+<thead><tr><th>Member</th><th>PRs</th><th>Merge Rate</th><th>Median Time to Merge</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td>tim-smart</td><td>113</td><td class="grade-a">96.5%</td><td class="grade-a"><strong>13 min</strong></td><td>Self-merging BDFL</td></tr>
+<tr><td>IMax153</td><td>34</td><td class="grade-a">94.1%</td><td class="grade-a">14 min</td><td>Trusted lieutenant</td></tr>
+<tr><td>gcanti</td><td>14</td><td class="grade-b">85.7%</td><td class="grade-a">14 min</td><td>Founder (semi-retired)</td></tr>
+<tr><td>mikearnaldi</td><td>16</td><td class="grade-c">68.8%</td><td class="grade-f"><strong>32.6 hrs</strong></td><td>Founder (needs review)</td></tr>
+<tr><td>mattiamanzati</td><td>9</td><td class="grade-c">66.7%</td><td class="grade-f">23.3 hrs</td><td>Contributor (needs review)</td></tr>
+</tbody>
+</table>
+<p class="dim" style="font-size: 7.5pt;">Even within core, there&rsquo;s a two-tier system. Tim and Maxwell merge in minutes. Arnaldi and Manzati wait hours and get rejected a third of the time.</p>
+
+<!-- ==================== TWO-CLASS SYSTEM ==================== -->
+<div class="page-break"></div>
+<h1>The Two-Class Merge System</h1>
+
+<div class="two-col">
+<div>
+<h3>Merge Rates</h3>
+<div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="stat-box"><div class="val grade-a">91.4%</div><div class="desc">Core Merge Rate</div></div>
+    <div class="stat-box"><div class="val grade-c">45.9%</div><div class="desc">Community Merge Rate</div></div>
+</div>
+</div>
+<div>
+<h3>Time to Merge (median)</h3>
+<div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="stat-box"><div class="val grade-a">14 min</div><div class="desc">Core Team</div></div>
+    <div class="stat-box"><div class="val grade-f">21 hrs</div><div class="desc">Community</div></div>
+</div>
+</div>
+</div>
+
+<h2>Size vs. Merge Probability</h2>
+<table>
+<thead><tr><th>PR Size</th><th>Core Merge Rate</th><th>Community Merge Rate</th><th>Gap</th></tr></thead>
+<tbody>
+<tr><td>Tiny (&lt;10 lines)</td><td class="grade-a">93.3%</td><td class="grade-c">43.6%</td><td class="grade-f">50 pts</td></tr>
+<tr><td>Small (&lt;100)</td><td class="grade-a">93.4%</td><td class="grade-b">60.5%</td><td class="grade-c">33 pts</td></tr>
+<tr><td>Medium (&lt;500)</td><td class="grade-b">85.7%</td><td class="grade-f">29.4%</td><td class="grade-f">56 pts</td></tr>
+<tr><td>Large (500+)</td><td class="grade-a">93.8%</td><td class="grade-f">18.2%</td><td class="grade-f">76 pts</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info">
+    <strong>vajra drift analysis: Core vs Community PRs &mdash; Severity: HIGH</strong>
+    Jensen-Shannon Divergence on time_to_merge = <strong>0.788</strong> (near-maximum divergence). Wasserstein distance on additions = <strong>2,232 lines</strong>. These are statistically distinct populations experiencing fundamentally different workflows.
+</div>
+
+<h2>Review Network</h2>
+<p>Tim Smart performs <strong>59.8%</strong> of all code reviews (73/122). vajra flagged this as z_mad = <strong>23.6</strong> (median reviewer does 3).</p>
+
+<table>
+<thead><tr><th>Reviewer</th><th>Reviews</th><th>Approval Rate</th><th>Rejection Rate</th><th>Signal</th></tr></thead>
+<tbody>
+<tr><td>tim-smart</td><td>73 (59.8%)</td><td>32.9%</td><td>11.0%</td><td class="grade-a">Most rigorous</td></tr>
+<tr><td>IMax153</td><td>18 (14.8%)</td><td class="grade-c">66.7%</td><td>27.8%</td><td class="grade-c">Rubber-stamp risk</td></tr>
+<tr><td>gcanti</td><td>8 (6.6%)</td><td class="grade-c">75%</td><td class="grade-f">0%</td><td class="grade-f">Never rejects</td></tr>
+<tr><td>Copilot AI</td><td>8 (6.6%)</td><td>0%</td><td>0%</td><td class="dim">Comment-only</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-critical">
+    <strong>71.2% of PRs have NO review activity.</strong> Code ships unreviewed or review happens off-platform. Combined with Tim's self-merge in 13 minutes, there is effectively no code review gate for the primary maintainer.
+</div>
+
+<!-- ==================== CONTRIBUTOR LIFECYCLE ==================== -->
+<div class="page-break"></div>
+<h1>Contributor Lifecycle &amp; Burnout</h1>
+
+<h2>Retention Crisis</h2>
+<div class="stat-grid">
+    <div class="stat-box"><div class="val grade-f">59.1%</div><div class="desc">One-Commit Contributors</div></div>
+    <div class="stat-box"><div class="val">0 days</div><div class="desc">Median Tenure</div></div>
+    <div class="stat-box"><div class="val grade-f">-1.08</div><div class="desc">Monthly Net Growth</div></div>
+    <div class="stat-box"><div class="val grade-c">20.5%</div><div class="desc">Currently Active</div></div>
+</div>
+
+<p>Of 88 total contributors, 52 (59.1%) made exactly one commit and never returned. Only 8 people (9.1%) made 10+ commits. The project attracts interest but cannot convert it into sustained contribution.</p>
+
+<h2>Burnout Preceded Every Core Departure</h2>
+<table>
+<thead><tr><th>Contributor</th><th>Burnout Score</th><th>Late Night %</th><th>Weekend %</th><th>Peak Hour</th><th>Packages</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Maxim Khramtsov</td><td class="grade-f"><strong>0.435</strong></td><td class="grade-f">64.7%</td><td>11.8%</td><td class="mono">00:00</td><td>30/31</td><td class="grade-f"><strong>DEPARTED</strong></td></tr>
+<tr><td>Sebastian Lorenz</td><td class="grade-f"><strong>0.300</strong></td><td class="grade-f">33.3%</td><td>25.0%</td><td class="mono">13:00</td><td>24</td><td class="grade-f"><strong>DEPARTED</strong></td></tr>
+<tr><td>Mattia Manzati</td><td class="grade-c"><strong>0.277</strong></td><td class="grade-c">30.8%</td><td>23.1%</td><td class="mono">09:00</td><td>13</td><td class="grade-f"><strong>DEPARTED</strong></td></tr>
+<tr><td>Michael Arnaldi</td><td class="grade-c">0.212</td><td>11.8%</td><td class="grade-c">35.3%</td><td class="mono">Sunday</td><td>6</td><td class="grade-c">Active (risk)</td></tr>
+<tr><td>Tim Smart</td><td class="grade-a">0.097</td><td>7.6%</td><td>12.9%</td><td class="mono">10:00</td><td>26</td><td class="grade-a">Active</td></tr>
+<tr><td>Maxwell Brown</td><td class="grade-a">0.022</td><td class="grade-a">0.0%</td><td>5.5%</td><td class="mono">09:00</td><td>21</td><td class="grade-a">Active (healthiest)</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-critical">
+    <strong>Burnout &rarr; Departure correlation = 1.0</strong>
+    The three highest burnout scores all left the project. Khramtsov (z_mad = 4.98 for midnight coding) carried knowledge of 30/31 packages &mdash; the broadest cross-cutting awareness of anyone, now irreplaceable.
+</div>
+
+<h2>Community PR Reception</h2>
+<table>
+<thead><tr><th>PR Type</th><th>Community Merge Rate</th><th>Core Merge Rate</th><th>Signal</th></tr></thead>
+<tbody>
+<tr><td>Bug fixes</td><td class="grade-b">62.8%</td><td class="grade-a">~95%</td><td class="grade-a">Accepted</td></tr>
+<tr><td>Feature PRs</td><td class="grade-f"><strong>20.9%</strong></td><td class="grade-a">87.5%</td><td class="grade-f">Effectively frozen</td></tr>
+<tr><td>Docs / minor</td><td class="grade-b">~60%</td><td class="grade-a">~90%</td><td class="grade-a">Accepted</td></tr>
+</tbody>
+</table>
+<p>The message to community contributors: <em>&ldquo;we accept your fixes, not your ideas.&rdquo;</em> First-time contributors merge at 40.7%; repeat contributors at 50% &mdash; being known helps, but only by 10 points.</p>
+
+<!-- ==================== ISSUE HEALTH ==================== -->
+<div class="page-break"></div>
+<h1>Issue Health &amp; Community Voice</h1>
+
+<h2>Year-Over-Year Deterioration</h2>
+<table>
+<thead><tr><th>Year</th><th>Issues Filed</th><th>Closed %</th><th>Zero-Comment %</th><th>Avg Comments</th></tr></thead>
+<tbody>
+<tr><td>2020</td><td>37</td><td class="grade-a">100%</td><td class="grade-a">19%</td><td>2.6</td></tr>
+<tr><td>2022</td><td>37</td><td class="grade-a">89%</td><td class="grade-a">14%</td><td>2.2</td></tr>
+<tr><td>2023</td><td>116</td><td class="grade-b">86%</td><td class="grade-c">31%</td><td>2.0</td></tr>
+<tr><td>2024</td><td>481</td><td class="grade-c">74%</td><td class="grade-c">40%</td><td>2.1</td></tr>
+<tr><td>2025</td><td>388</td><td class="grade-f">50%</td><td class="grade-f">46%</td><td>1.3</td></tr>
+<tr><td>2026 (Q1)</td><td>98</td><td class="grade-f">36%</td><td class="grade-f">55%</td><td class="grade-f">0.8</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-warning">
+    <strong>41% of all issues (493/1,202) have zero comments.</strong>
+    Issue volume grew 13x since 2020 while team size stayed flat. Close rate fell from 100% to 36%. The project is drowning in its own success.
+</div>
+
+<h2>Neglected Issues With Active Community Discussion</h2>
+<table>
+<thead><tr><th>#</th><th>Title</th><th>Community Comments</th><th>Maintainer Response</th></tr></thead>
+<tbody>
+<tr><td class="mono">#3864</td><td>Cloudflare Pages build error</td><td>12</td><td class="grade-f">None</td></tr>
+<tr><td class="mono">#4660</td><td>MsgPack node import issue</td><td>11</td><td class="grade-f">None</td></tr>
+<tr><td class="mono">#4125</td><td>sql-drizzle build error</td><td>10</td><td class="grade-f">None</td></tr>
+<tr><td class="mono">#2873</td><td>Platform Multipart missing support</td><td>10</td><td class="grade-f">None</td></tr>
+<tr><td class="mono">#3509</td><td>TypeError constructor.name undefined</td><td>8</td><td class="grade-f">None</td></tr>
+</tbody>
+</table>
+
+<h2>Response Time &amp; the Discord Funnel</h2>
+<div class="two-col">
+<div>
+<h3>Issue Response Speed</h3>
+<table>
+<thead><tr><th>Metric</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Median first response</td><td><strong>10.8 hours</strong></td></tr>
+<tr><td>Median maintainer response</td><td><strong>13.4 hours</strong></td></tr>
+<tr><td>p95 maintainer response</td><td class="grade-c">222.6 hours (9 days)</td></tr>
+<tr><td>Issues with maintainer reply</td><td>83/100 top issues</td></tr>
+</tbody>
+</table>
+</div>
+<div>
+<h3>The Discord Bot Problem</h3>
+<p><strong>effect-bot</strong> accounts for 272 issues (23% of all issues) &mdash; questions forwarded from Discord.</p>
+<p class="grade-f"><strong>65% of bot-forwarded issues have zero comments.</strong></p>
+<p>The funnel creates volume the team cannot absorb, diluting signal and inflating the backlog. Community-to-community support is minimal: when maintainers don&rsquo;t respond, issues die.</p>
+</div>
+</div>
+
+<!-- ==================== PACKAGE HEALTH ==================== -->
+<div class="page-break"></div>
+<h1>Monorepo Package Health</h1>
+
+<div class="callout callout-info" style="margin-bottom: 14px;">
+    <strong>vajra invariant from issue analysis:</strong> <code>maintainer_response_hours</code> correlates 0.89 with <code>response_speed_hours</code> &mdash; maintainers are almost always the first responders. There is little peer-to-peer support in the community.
+</div>
+
+<h2>31 Packages, 3 Health Tiers</h2>
+<table>
+<thead><tr><th>Package</th><th>Commits</th><th>Authors</th><th>Fix Ratio</th><th>Health Tier</th></tr></thead>
+<tbody>
+<tr><td><strong>effect</strong> (core)</td><td>238</td><td>47</td><td class="grade-f"><strong>20.2%</strong></td><td class="grade-f">At Risk (59.5)</td></tr>
+<tr><td><strong>ai</strong></td><td>204</td><td>23</td><td class="grade-c"><strong>14.7%</strong></td><td class="grade-c">Monitor (64.1)</td></tr>
+<tr><td>platform</td><td>176</td><td>26</td><td class="grade-b">9.1%</td><td>Monitor (67.0)</td></tr>
+<tr><td>cluster</td><td>245</td><td>10</td><td class="grade-a">4.1%</td><td class="grade-a">Healthy (75.7)</td></tr>
+<tr><td>rpc</td><td>129</td><td>9</td><td class="grade-b">7.8%</td><td>Monitor (63.8)</td></tr>
+<tr><td>platform-node</td><td>136</td><td>10</td><td class="grade-a">2.2%</td><td class="grade-a">Healthy (73.2)</td></tr>
+<tr><td>printer / printer-ansi</td><td>31</td><td class="grade-f">2</td><td>3.2%</td><td class="grade-f">At Risk (42.0)</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-critical">
+    <strong>The core <code>effect</code> package has the highest defect density in the repo.</strong>
+    20.2% fix ratio (z_mad = 7.73) &mdash; 6.7x the monorepo median of 3%. It also has the most structural complexity: 4,481 AST nodes, 176 namespace re-exports, max depth 9.
+</div>
+
+<h2>Coupling Hotspots</h2>
+<p>The <code>cluster</code> package is the coupling hub, appearing in 5 of the top 8 co-change pairs. Median co-change frequency = 69, MAD = 4.</p>
+
+<div class="hbar-row"><div class="hbar-label">cluster &harr; platform-node</div><div class="hbar-track"><div class="hbar-fill red" style="width:100%">105</div></div></div>
+<div class="hbar-row"><div class="hbar-label">p-node &harr; p-node-shared</div><div class="hbar-track"><div class="hbar-fill red" style="width:98%">103</div></div></div>
+<div class="hbar-row"><div class="hbar-label">cluster &harr; p-node-shared</div><div class="hbar-track"><div class="hbar-fill amber" style="width:95%">100</div></div></div>
+<div class="hbar-row"><div class="hbar-label">p-bun &harr; p-node-shared</div><div class="hbar-track"><div class="hbar-fill amber" style="width:94%">99</div></div></div>
+<div class="hbar-row"><div class="hbar-label">p-bun &harr; p-node</div><div class="hbar-track"><div class="hbar-fill amber" style="width:91%">96</div></div></div>
+
+<!-- ==================== PERFORMANCE ==================== -->
+<div class="page-break"></div>
+<h1>CPU Performance Profile</h1>
+<p>19 benchmarks exercising every major Effect-TS code path, profiled with V8 CPU profiler, <code>--prof</code>, and <code>strace</code> on both Node v22 and Bun 1.3.5.</p>
+
+<h2>Overhead vs Raw JavaScript</h2>
+<table>
+<thead><tr><th>Benchmark</th><th>Node (ms)</th><th>Bun (ms)</th><th>Overhead</th></tr></thead>
+<tbody>
+<tr>
+        <td class="label-cell">Effect.succeed + map chain (50k)</td>
+        <td class="num winner">18.7</td>
+        <td class="num ">23.2</td>
+        <td class="num grade-b"><strong>12x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Effect.gen (50k)</td>
+        <td class="num winner">3.2</td>
+        <td class="num ">3.3</td>
+        <td class="num grade-a"><strong>2.1x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Deep pipe (20 maps, 50k)</td>
+        <td class="num winner">16.8</td>
+        <td class="num ">19.0</td>
+        <td class="num grade-b"><strong>11x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Effect.runSync (50k)</td>
+        <td class="num ">79.5</td>
+        <td class="num winner">77.4</td>
+        <td class="num grade-c"><strong>52x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Option.map chain (50k)</td>
+        <td class="num ">7.6</td>
+        <td class="num winner">7.0</td>
+        <td class="num grade-a"><strong>5.0x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Either.map chain (50k)</td>
+        <td class="num winner">7.9</td>
+        <td class="num ">8.1</td>
+        <td class="num grade-b"><strong>5x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Schema.decodeSync (50k)</td>
+        <td class="num winner">20.3</td>
+        <td class="num ">24.2</td>
+        <td class="num grade-b"><strong>13x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Schema.encodeSync (50k)</td>
+        <td class="num ">17.9</td>
+        <td class="num winner">9.3</td>
+        <td class="num grade-b"><strong>12x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Complex Schema decode (50k)</td>
+        <td class="num winner">45.3</td>
+        <td class="num ">79.1</td>
+        <td class="num grade-c"><strong>30x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Chunk.fromIterable + map + filter (10k)</td>
+        <td class="num ">67.9</td>
+        <td class="num winner">33.1</td>
+        <td class="num grade-c"><strong>44x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Effect.runPromise async chain (10k)</td>
+        <td class="num winner">16.8</td>
+        <td class="num ">19.0</td>
+        <td class="num grade-b"><strong>11x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Stream.range + map + filter + runCollect (10k elements)</td>
+        <td class="num winner">8.7</td>
+        <td class="num ">10.3</td>
+        <td class="num grade-b"><strong>6x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Fiber.fork + join (5k)</td>
+        <td class="num ">79.5</td>
+        <td class="num winner">56.0</td>
+        <td class="num grade-c"><strong>52x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Queue offer + take (10k)</td>
+        <td class="num ">14.7</td>
+        <td class="num winner">13.0</td>
+        <td class="num grade-b"><strong>10x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Ref.update (50k)</td>
+        <td class="num winner">13.6</td>
+        <td class="num ">15.1</td>
+        <td class="num grade-b"><strong>9x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Layer.provide (10k)</td>
+        <td class="num ">528.4</td>
+        <td class="num winner">458.7</td>
+        <td class="num grade-f"><strong>345x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Effect.catchAll error path (50k)</td>
+        <td class="num winner">71.5</td>
+        <td class="num ">88.5</td>
+        <td class="num grade-c"><strong>47x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">Schedule.recurs(3) retry (5k)</td>
+        <td class="num ">203.6</td>
+        <td class="num winner">194.7</td>
+        <td class="num grade-f"><strong>133x</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">BASELINE: Raw JS map chain (50k)</td>
+        <td class="num winner">1.5</td>
+        <td class="num ">1.9</td>
+        <td class="num grade-a"><strong>baseline</strong></td>
+    </tr>
+<tr>
+        <td class="label-cell">BASELINE: Raw Promise.resolve chain (50k)</td>
+        <td class="num ">10.4</td>
+        <td class="num winner">9.6</td>
+        <td class="num grade-a"><strong>baseline</strong></td>
+    </tr>
+
+</tbody>
+</table>
+
+<h2>CPU Time Distribution</h2>
+<div class="stat-grid">
+    <div class="stat-box"><div class="val" style="color:var(--purple)">73.6%</div><div class="desc">Effect Runtime</div></div>
+    <div class="stat-box"><div class="val" style="color:var(--amber)">19.6%</div><div class="desc">V8 / Node Internals</div></div>
+    <div class="stat-box"><div class="val" style="color:var(--green)">6.8%</div><div class="desc">Benchmark Code</div></div>
+    <div class="stat-box"><div class="val" style="color:var(--red)">6.4%</div><div class="desc">Garbage Collector</div></div>
+</div>
+
+<h2>Top CPU Hotspots (V8 Profiler, 1,523 samples)</h2>
+<table>
+<thead><tr><th>CPU %</th><th>Source</th><th>Function</th><th>File</th><th>Distribution</th></tr></thead>
+<tbody>
+<tr>
+            <td class="num"><strong>18.1%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">(anonymous)</td>
+            <td class="mono dim">fiberRuntime.js</td>
+            <td><div class="bar" style="width:90.60000000000001%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>6.4%</strong></td>
+            <td><span class="tag source-v8/node">v8/node</span></td>
+            <td class="mono">(garbage collector)</td>
+            <td class="mono dim">native</td>
+            <td><div class="bar" style="width:31.85%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>6.0%</strong></td>
+            <td><span class="tag source-benchmark">benchmark</span></td>
+            <td class="mono">(anonymous)</td>
+            <td class="mono dim">bench.mjs</td>
+            <td><div class="bar" style="width:30.2%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>4.7%</strong></td>
+            <td><span class="tag source-v8/node">v8/node</span></td>
+            <td class="mono">compileSourceTextModule</td>
+            <td class="mono dim">utils</td>
+            <td><div class="bar" style="width:23.3%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>3.9%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">evaluateEffect</td>
+            <td class="mono dim">fiberRuntime.js</td>
+            <td><div class="bar" style="width:19.7%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>3.7%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">runLoop</td>
+            <td class="mono dim">fiberRuntime.js</td>
+            <td><div class="bar" style="width:18.400000000000002%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>3.5%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">(anonymous)</td>
+            <td class="mono dim">core.js</td>
+            <td><div class="bar" style="width:17.4%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>3.4%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">(anonymous)</td>
+            <td class="mono dim">ParseResult.js</td>
+            <td><div class="bar" style="width:16.75%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>2.7%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">(anonymous)</td>
+            <td class="mono dim">runtime.js</td>
+            <td><div class="bar" style="width:13.45%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>2.6%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">(anonymous)</td>
+            <td class="mono dim">Function.js</td>
+            <td><div class="bar" style="width:13.149999999999999%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>2.4%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">getFiberRef</td>
+            <td class="mono dim">fiberRuntime.js</td>
+            <td><div class="bar" style="width:12.15%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>2.0%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">fromIterable</td>
+            <td class="mono dim">Array.js</td>
+            <td><div class="bar" style="width:9.85%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>1.9%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">(anonymous)</td>
+            <td class="mono dim">fiberRefs.js</td>
+            <td><div class="bar" style="width:9.5%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>1.5%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">contOpSuccess</td>
+            <td class="mono dim">fiberRuntime.js</td>
+            <td><div class="bar" style="width:7.55%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>1.2%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">(anonymous)</td>
+            <td class="mono dim">layer.js</td>
+            <td><div class="bar" style="width:6.25%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>1.2%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">(anonymous)</td>
+            <td class="mono dim">Predicate.js</td>
+            <td><div class="bar" style="width:6.25%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>1.0%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">(anonymous)</td>
+            <td class="mono dim">ref.js</td>
+            <td><div class="bar" style="width:4.9%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>0.9%</strong></td>
+            <td><span class="tag source-v8/node">v8/node</span></td>
+            <td class="mono">(program)</td>
+            <td class="mono dim">native</td>
+            <td><div class="bar" style="width:4.6000000000000005%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>0.8%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">(anonymous)</td>
+            <td class="mono dim">Scheduler.js</td>
+            <td><div class="bar" style="width:4.25%"></div></td>
+        </tr>
+<tr>
+            <td class="num"><strong>0.8%</strong></td>
+            <td><span class="tag source-effect">effect</span></td>
+            <td class="mono">(anonymous)</td>
+            <td class="mono dim">fiberScope.js</td>
+            <td><div class="bar" style="width:4.25%"></div></td>
+        </tr>
+
+</tbody>
+</table>
+
+<div class="callout callout-info">
+    <strong>The fiber runtime (fiberRuntime.js) consumes 30%+ of all CPU.</strong>
+    Anonymous closures in the continuation-passing scheduler are the #1 hotspot at z_mad = 39.9 &mdash; nearly 40 standard deviations above the median function. This is the engine of Effect: real work, but expensive.
+</div>
+
+<h2>Syscall Profile (strace)</h2>
+<table>
+<thead><tr><th>Syscall</th><th>Calls</th><th>% Time</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td class="mono">futex</td><td class="num">2,856</td><td class="num"><strong>24.4%</strong></td><td>Thread synchronization (fiber scheduling)</td></tr>
+<tr><td class="mono">munmap</td><td class="num">675</td><td class="num">22.2%</td><td>Memory deallocation (GC pressure)</td></tr>
+<tr><td class="mono">statx</td><td class="num">4,000</td><td class="num">16.4%</td><td>File stat (module resolution)</td></tr>
+<tr><td class="mono">openat</td><td class="num">2,687</td><td class="num">13.9%</td><td>File opens (2,062 failures)</td></tr>
+<tr><td class="mono">madvise</td><td class="num">354</td><td class="num">12.0%</td><td>Memory management hints</td></tr>
+</tbody>
+</table>
+
+<h2>The Three Cost Tiers</h2>
+<div class="two-col">
+<div>
+<div class="callout callout-good">
+    <strong>Tier 1 &mdash; Cheap (2-12x)</strong>
+    Effect.gen, Option, Either, basic pipes. The idiomatic path is only 2x overhead. If you stick to generators, Effect is nearly free.
+</div>
+<div class="callout callout-warning">
+    <strong>Tier 2 &mdash; Moderate (12-50x)</strong>
+    Schema validation, runSync, error handling, Chunks. Each runSync boots the full fiber runtime.
+</div>
+</div>
+<div>
+<div class="callout callout-critical">
+    <strong>Tier 3 &mdash; Expensive (50-345x)</strong>
+    Layer.provide (345x), Schedule retry (133x), Fiber spawn (52x). Layer reconstructs the DI context per call &mdash; provide once at startup, not per-request.
+</div>
+</div>
+</div>
+
+<!-- ==================== METHODOLOGY ==================== -->
+<h1 style="margin-top: 24px;">Methodology</h1>
+
+<h2>Analysis Engine</h2>
+<p><strong>vajra</strong> &mdash; a deterministic semantic reduction engine for structured data. Every analysis in this report is reproducible: same input + same config = byte-identical output. No ML, no heuristics, no sentiment analysis. Pure information theory on structured data.</p>
+
+<h2>Algorithms Applied</h2>
+<table>
+<thead><tr><th>Algorithm</th><th>Purpose</th><th>Where Used</th></tr></thead>
+<tbody>
+<tr><td>Shannon Entropy</td><td>Value diversity / concentration</td><td>Author entropy across all data sources</td></tr>
+<tr><td>MAD (Median Absolute Deviation)</td><td>Robust outlier detection</td><td>Burnout scores, PR sizes, CPU hotspots</td></tr>
+<tr><td>Conditional Entropy H(Y|X)</td><td>Cross-field dependency</td><td>Author&rarr;state, file&rarr;fixer correlations</td></tr>
+<tr><td>Jensen-Shannon Divergence</td><td>Distribution comparison</td><td>Core vs community PR drift</td></tr>
+<tr><td>Wasserstein Distance</td><td>Distribution shift magnitude</td><td>PR size gap measurement</td></tr>
+<tr><td>BLAKE3</td><td>Structural fingerprinting</td><td>Package structure identity</td></tr>
+<tr><td>MinHash + LSH</td><td>Similarity clustering</td><td>Package co-change detection</td></tr>
+</tbody>
+</table>
+
+<h2>Data Sources</h2>
+<table>
+<thead><tr><th>Source</th><th>Records</th><th>Method</th></tr></thead>
+<tbody>
+<tr><td>Git commits</td><td>800</td><td><code>git log</code> &rarr; JSON &rarr; vajra</td></tr>
+<tr><td>Pull requests</td><td>500</td><td>GitHub GraphQL API &rarr; vajra</td></tr>
+<tr><td>Issues</td><td>1,202</td><td>GitHub REST API &rarr; vajra</td></tr>
+<tr><td>Code reviews</td><td>172</td><td>GitHub GraphQL (review data) &rarr; vajra</td></tr>
+<tr><td>Releases</td><td>100</td><td><code>gh release list</code> &rarr; vajra</td></tr>
+<tr><td>Issue comments</td><td>899</td><td>GitHub REST per-issue &rarr; vajra</td></tr>
+<tr><td>CPU profile</td><td>1,523 samples</td><td>V8 <code>--cpu-prof</code> &rarr; vajra</td></tr>
+<tr><td>Syscall trace</td><td>13,001 calls</td><td><code>strace -c</code> &rarr; vajra</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info" style="margin-top: 20px;">
+    <strong>About This Report</strong>
+    Generated on April 9, 2026 using vajra v0.1.0. All findings are based on publicly available data from the Effect-TS/effect GitHub repository. This report is intended as a constructive health assessment, not a criticism of any individual contributor. Open source maintainers deserve immense gratitude for their work.
+</div>
+
+<div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--slate-200);">
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgNTAiIGZpbGw9Im5vbmUiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJ2YWpyYUdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6I2Y1OWUwYiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNlZjQ0NDQiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxwb2x5Z29uIHBvaW50cz0iMjUsNSAzMCwyMCA0NSwyMCAzMywzMCAzNyw0NSAyNSwzNSAxMyw0NSAxNywzMCA1LDIwIDIwLDIwIiBmaWxsPSJ1cmwoI3ZhanJhR3JhZCkiLz4KICA8dGV4dCB4PSI1NSIgeT0iMzUiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIG1vbm9zcGFjZSIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCN2YWpyYUdyYWQpIj52YWpyYTwvdGV4dD4KPC9zdmc+Cg==" style="width: 120px; opacity: 0.6;" alt="vajra">
+    <p class="dim" style="font-size: 7pt; margin-top: 8px;">Deterministic semantic reduction &mdash; vajra.dev</p>
+</div>
+
+</body>
+</html>

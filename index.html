@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Source Intelligence Reports</title>
+<meta name="description" content="Deep health, governance, and performance analysis of popular open source projects. Deterministic. Reproducible. No heuristics.">
+<style>
+:root {
+    --bg: #0a0a0b;
+    --surface: #111113;
+    --border: #1e1e22;
+    --text: #e4e4e7;
+    --text-dim: #71717a;
+    --accent: #a78bfa;
+    --accent-dim: #7c3aed;
+    --green: #4ade80;
+    --amber: #fbbf24;
+    --red: #f87171;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container { max-width: 800px; margin: 0 auto; padding: 0 24px; }
+
+/* === HEADER === */
+header {
+    padding: 80px 0 60px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.logo-mark {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+    color: white;
+}
+
+.logo-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+header h1 {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #e4e4e7, #a1a1aa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+header p {
+    font-size: 18px;
+    color: var(--text-dim);
+    max-width: 540px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.badge {
+    display: inline-block;
+    margin-top: 24px;
+    padding: 6px 16px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+}
+
+/* === REPORTS LIST === */
+.reports {
+    padding: 60px 0;
+}
+
+.reports h2 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+}
+
+.report-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+.report-card:hover {
+    border-color: var(--accent-dim);
+    transform: translateY(-2px);
+}
+
+.report-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--text-dim);
+}
+
+.report-meta .date { }
+.report-meta .sep { color: var(--border); }
+
+.report-grade {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+}
+.grade-a { background: rgba(74, 222, 128, 0.12); color: var(--green); }
+.grade-b { background: rgba(96, 165, 250, 0.12); color: #60a5fa; }
+.grade-c { background: rgba(251, 191, 36, 0.12); color: var(--amber); }
+.grade-d { background: rgba(248, 113, 113, 0.12); color: var(--red); }
+.grade-f { background: rgba(248, 113, 113, 0.2); color: var(--red); }
+
+.report-card h3 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+}
+
+.report-card .desc {
+    color: var(--text-dim);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.report-stats {
+    display: flex;
+    gap: 24px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-dim);
+}
+
+.report-stats .stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.report-stats .stat strong {
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+}
+
+/* === METHODOLOGY === */
+.methodology {
+    padding: 60px 0;
+    border-top: 1px solid var(--border);
+}
+
+.methodology h2 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+}
+
+.method-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.method-card {
+    padding: 20px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.method-card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--accent);
+}
+
+.method-card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+}
+
+/* === FOOTER === */
+footer {
+    padding: 40px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-dim);
+}
+
+footer .engine {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+footer .engine .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 640px) {
+    header { padding: 48px 0 40px; }
+    header h1 { font-size: 28px; }
+    header p { font-size: 16px; }
+    .method-grid { grid-template-columns: 1fr; }
+    .report-stats { flex-wrap: wrap; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <div class="logo">
+            <div class="logo-mark">V</div>
+            <div class="logo-text">Intelligence Reports</div>
+        </div>
+        <h1>Open Source Health Intelligence</h1>
+        <p>Deep analysis of popular open source projects. Governance, performance, contributor health, code stability. Deterministic. Reproducible.</p>
+        <div class="badge">Powered by vajra engine</div>
+    </div>
+</header>
+
+<section class="reports">
+    <div class="container">
+        <h2>Reports</h2>
+
+        <a href="reports/effect-ts/index.html" class="report-card">
+            <div class="report-meta">
+                <span class="date">April 9, 2026</span>
+                <span class="sep">/</span>
+                <span class="report-grade grade-d">D+</span>
+            </div>
+            <h3>Effect-TS/effect</h3>
+            <p class="desc">Build production-ready applications in TypeScript. 13.8K stars. A brilliant but fragile project with a bus factor of 1, two-class merge system, and declining velocity.</p>
+            <div class="report-stats">
+                <div class="stat">Commits: <strong>800</strong></div>
+                <div class="stat">PRs: <strong>500</strong></div>
+                <div class="stat">Issues: <strong>1,202</strong></div>
+                <div class="stat">Reviews: <strong>172</strong></div>
+                <div class="stat">CPU samples: <strong>1,523</strong></div>
+            </div>
+        </a>
+
+        <!-- Future reports go here -->
+        <!--
+        <a href="reports/next-repo/index.html" class="report-card">
+            ...
+        </a>
+        -->
+
+    </div>
+</section>
+
+<section class="methodology">
+    <div class="container">
+        <h2>How It Works</h2>
+        <div class="method-grid">
+            <div class="method-card">
+                <h3>Information Theory</h3>
+                <p>Shannon entropy measures contributor diversity. Conditional entropy reveals hidden dependencies. No heuristics — pure math on structured data.</p>
+            </div>
+            <div class="method-card">
+                <h3>Robust Statistics</h3>
+                <p>MAD-based outlier detection with 50% breakdown point. Jensen-Shannon Divergence for distribution comparison. Wasserstein distance for shift magnitude.</p>
+            </div>
+            <div class="method-card">
+                <h3>Temporal Analysis</h3>
+                <p>Time-series windowing with trend detection. Cascade chain analysis for cause-effect patterns. Burnout signal detection from commit timestamps.</p>
+            </div>
+            <div class="method-card">
+                <h3>Deterministic</h3>
+                <p>Same input, same output. Every number is reproducible. Every score is decomposable. No ML, no sentiment analysis, no probabilistic inference.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <div class="engine">
+            <span class="dot"></span>
+            Powered by vajra engine
+        </div>
+        <p>Deterministic semantic reduction for structured data</p>
+    </div>
+</footer>
+
+</body>
+</html>
