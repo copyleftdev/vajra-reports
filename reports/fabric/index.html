@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+@page {
+    size: A4;
+    margin: 20mm 18mm 25mm 18mm;
+    @top-right {
+        content: "CONFIDENTIAL";
+        font-size: 7pt;
+        color: #94a3b8;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+    @bottom-center {
+        content: counter(page) " / " counter(pages);
+        font-size: 8pt;
+        color: #64748b;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+    @bottom-left {
+        content: "vajra deterministic analysis";
+        font-size: 7pt;
+        color: #94a3b8;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+}
+
+@page :first {
+    margin-top: 0;
+    @top-right { content: none; }
+    @bottom-center { content: none; }
+    @bottom-left { content: none; }
+}
+
+:root {
+    --fabric-teal: #14b8a6;
+    --fabric-dark: #0f766e;
+    --purple: #8b5cf6;
+    --blue: #3b82f6;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --green: #22c55e;
+    --slate-50: #f8fafc;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-300: #cbd5e1;
+    --slate-400: #94a3b8;
+    --slate-500: #64748b;
+    --slate-600: #475569;
+    --slate-700: #334155;
+    --slate-800: #1e293b;
+    --slate-900: #0f172a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 9pt;
+    line-height: 1.5;
+    color: var(--slate-800);
+    background: white;
+}
+
+/* === COVER PAGE === */
+.cover {
+    page-break-after: always;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, #0f172a 0%, #0a1628 40%, #0f2922 100%);
+    color: white;
+    margin: -20mm -18mm 0 -18mm;
+    padding: 40mm 30mm;
+}
+
+.cover-icon {
+    font-size: 72pt;
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+.cover h1 {
+    font-size: 36pt;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #14b8a6, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+}
+.cover h2 {
+    font-size: 14pt;
+    font-weight: 400;
+    color: #94a3b8;
+    margin-bottom: 40px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+.cover-meta {
+    font-size: 9pt;
+    color: #64748b;
+    line-height: 2;
+}
+.cover-meta strong { color: #94a3b8; }
+.cover-divider {
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, #14b8a6, #8b5cf6);
+    margin: 30px auto;
+    border-radius: 1px;
+}
+.cover-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border: 1px solid #134e4a;
+    border-radius: 20px;
+    font-size: 7.5pt;
+    color: #14b8a6;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 20px;
+}
+
+/* === SECTIONS === */
+.section { page-break-before: always; }
+.section:first-of-type { page-break-before: auto; }
+.section-continue { page-break-before: avoid; }
+
+table { page-break-inside: auto; }
+tr { page-break-inside: avoid; }
+thead { display: table-header-group; }
+.callout { page-break-inside: avoid; }
+.stat-grid { page-break-inside: avoid; }
+.health-item { page-break-inside: avoid; }
+
+h1 {
+    font-size: 20pt;
+    font-weight: 800;
+    color: var(--slate-900);
+    letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+    padding-bottom: 8px;
+    border-bottom: 3px solid;
+    border-image: linear-gradient(90deg, #14b8a6, var(--purple)) 1;
+}
+
+h2 {
+    font-size: 13pt;
+    font-weight: 700;
+    color: var(--slate-800);
+    margin: 18px 0 8px 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--slate-200);
+}
+
+h3 {
+    font-size: 10pt;
+    font-weight: 700;
+    color: var(--slate-700);
+    margin: 14px 0 6px 0;
+}
+
+p { margin: 6px 0; color: var(--slate-700); }
+
+/* === TABLES === */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 16px 0;
+    font-size: 8pt;
+}
+
+thead th {
+    background: var(--slate-800);
+    color: white;
+    font-weight: 600;
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 6px 8px;
+    text-align: left;
+    border: none;
+}
+
+tbody td {
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--slate-100);
+    vertical-align: middle;
+}
+
+tbody tr:nth-child(even) { background: var(--slate-50); }
+tbody tr:hover { background: #e0faf5; }
+
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 7.5pt; }
+.dim { color: var(--slate-400); }
+.label-cell { font-weight: 500; max-width: 200px; }
+
+/* === GRADE COLORS === */
+.grade-a { color: var(--green); }
+.grade-b { color: var(--blue); }
+.grade-c { color: var(--amber); }
+.grade-f { color: var(--red); }
+.winner { font-weight: 700; }
+
+/* === TAGS === */
+.tag {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 6.5pt;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.tag-core { background: #ccfbf1; color: #0f766e; }
+.tag-community { background: #dcfce7; color: #166534; }
+.tag-creator { background: #ede9fe; color: #6d28d9; }
+.tag-bot { background: #f1f5f9; color: #64748b; }
+
+/* === BARS === */
+.bar {
+    height: 10px;
+    background: linear-gradient(90deg, #14b8a6, var(--blue));
+    border-radius: 2px;
+    min-width: 2px;
+}
+
+/* === CALLOUT BOXES === */
+.callout {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 12px 0;
+    font-size: 8.5pt;
+}
+.callout-critical {
+    background: #fef2f2;
+    border-left: 4px solid var(--red);
+}
+.callout-warning {
+    background: #fffbeb;
+    border-left: 4px solid var(--amber);
+}
+.callout-info {
+    background: #eff6ff;
+    border-left: 4px solid var(--blue);
+}
+.callout-good {
+    background: #f0fdf4;
+    border-left: 4px solid var(--green);
+}
+.callout strong { display: block; margin-bottom: 4px; }
+
+/* === HEALTH CARD === */
+.health-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 12px 0;
+}
+.health-item {
+    padding: 10px 14px;
+    border-radius: 6px;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+}
+.health-item .metric {
+    font-size: 22pt;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+}
+.health-item .label {
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--slate-500);
+    margin-top: 2px;
+}
+
+/* === STAT ROW === */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+}
+.stat-box {
+    text-align: center;
+    padding: 10px;
+    background: var(--slate-50);
+    border-radius: 6px;
+    border: 1px solid var(--slate-200);
+}
+.stat-box .val {
+    font-size: 18pt;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+.stat-box .desc {
+    font-size: 6.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--slate-500);
+    margin-top: 2px;
+}
+
+/* === COLUMNS === */
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* === CHART-LIKE === */
+.hbar-row {
+    display: flex;
+    align-items: center;
+    margin: 3px 0;
+    font-size: 7.5pt;
+}
+.hbar-label {
+    width: 140px;
+    text-align: right;
+    padding-right: 8px;
+    font-weight: 500;
+    color: var(--slate-600);
+    white-space: nowrap;
+    overflow: hidden;
+}
+.hbar-track {
+    flex: 1;
+    height: 14px;
+    background: var(--slate-100);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.hbar-fill {
+    height: 100%;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    padding-left: 6px;
+    font-size: 6.5pt;
+    font-weight: 600;
+    color: white;
+}
+.hbar-fill.teal { background: linear-gradient(90deg, #0f766e, #14b8a6); }
+.hbar-fill.cyan { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+.hbar-fill.purple { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+.hbar-fill.blue { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.hbar-fill.amber { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.hbar-fill.red { background: linear-gradient(90deg, #ef4444, #f87171); }
+.hbar-fill.green { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.hbar-fill.slate { background: linear-gradient(90deg, #64748b, #94a3b8); }
+
+.page-break { page-break-before: always; }
+.no-orphan { page-break-inside: avoid; }
+
+/* Tighten for print */
+@media print {
+    body { font-size: 8.5pt; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER ==================== -->
+<div class="cover">
+    <div class="cover-icon">&#x1F9F5;</div>
+    <h1>Deep Analysis Report</h1>
+    <h2>Health &middot; Governance &middot; Power Transition</h2>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+        <strong>Repository:</strong> danielmiessler/fabric<br>
+        <strong>Stars:</strong> 40,500+ &nbsp;&middot;&nbsp; <strong>Language:</strong> Go &nbsp;&middot;&nbsp; <strong>Category:</strong> AI Prompts Framework<br>
+        <strong>Data Sources:</strong> 800 commits &middot; 500 PRs &middot; 500 issues &middot; 50 releases<br>
+        <strong>Analysis Date:</strong> April 9, 2026
+    </div>
+    <div class="cover-badge">Powered by vajra &mdash; deterministic semantic reduction</div>
+</div>
+
+<!-- ==================== EXECUTIVE SUMMARY ==================== -->
+<div class="page-break"></div>
+<h1>Executive Summary</h1>
+
+<div class="stat-grid">
+    <div class="stat-box">
+        <div class="val grade-f">C-</div>
+        <div class="desc">Overall Health</div>
+    </div>
+    <div class="stat-box">
+        <div class="val grade-f">2.07</div>
+        <div class="desc">Commit Entropy (bits)</div>
+    </div>
+    <div class="stat-box">
+        <div class="val grade-f">65x</div>
+        <div class="desc">Merge Speed Gap</div>
+    </div>
+    <div class="stat-box">
+        <div class="val grade-c">18.4%</div>
+        <div class="desc">Fix Rate in Commits</div>
+    </div>
+</div>
+
+<p>Fabric is an <strong>AI prompt augmentation framework</strong> created by Daniel Miessler that has captured 40.5K stars in under two years. But the project behind those stars tells a story the star count cannot: a <strong>silent power transition</strong>. The creator has stepped back from active development, and a single volunteer maintainer &mdash; <strong>Kayvan Sylvan (ksylvan)</strong> &mdash; now writes <strong>84.9% of all human commits</strong> and merges 98% of his own PRs. This is the most extreme single-maintainer dependency we have measured across any project in our portfolio.</p>
+
+<div class="callout callout-critical">
+    <strong>Key Finding: The Invisible Hand</strong>
+    danielmiessler created Fabric and owns the repo's 40.5K stars, but has only 6 commits in the last 800 (1.0%). ksylvan writes 84.9% of all human code, reviews all community PRs, and responds to 843 issue comments. Fabric is a <strong>one-person project wearing a two-person mask</strong>. If ksylvan steps away, active development stops.
+</div>
+
+<h2>Health Scorecard</h2>
+<table>
+<thead><tr><th>Dimension</th><th>Grade</th><th>Key Metric</th><th>vajra Signal</th></tr></thead>
+<tbody>
+<tr><td>Bus Factor</td><td class="grade-f"><strong>F</strong></td><td>1 active core engineer</td><td>Commit entropy 2.07 bits, bus factor 80% = 1</td></tr>
+<tr><td>Governance Model</td><td class="grade-f"><strong>D</strong></td><td>Creator absent, single delegate</td><td>Top-1 share = 84.9%, Gini = 0.878</td></tr>
+<tr><td>Merge Equity</td><td class="grade-c"><strong>C+</strong></td><td>Core 98.0% vs community 62.9%</td><td>Merge rate gap = 35.1 pts</td></tr>
+<tr><td>Community Reception</td><td class="grade-b"><strong>B</strong></td><td>62.9% community merge rate</td><td>Median wait 24.7h vs 0.4h</td></tr>
+<tr><td>Issue Response</td><td class="grade-b"><strong>B+</strong></td><td>ksylvan responds to 59.2% of issues</td><td>96.8% close rate, 11.4% zero-comment</td></tr>
+<tr><td>Code Stability</td><td class="grade-c"><strong>D+</strong></td><td>18.4% fix ratio</td><td>147/800 commits are fixes</td></tr>
+<tr><td>Release Cadence</td><td class="grade-a"><strong>A</strong></td><td>50 releases, v1.4.444 latest</td><td>High-frequency patch releases</td></tr>
+<tr><td>Contributor Retention</td><td class="grade-c"><strong>C</strong></td><td>44.7% one-commit contributors</td><td>17/38 human authors contributed once</td></tr>
+<tr><td>Velocity Trend</td><td class="grade-a"><strong>A</strong></td><td>28 &rarr; 209 &rarr; 85 commits/month</td><td>Accelerating, slope positive</td></tr>
+<tr><td>Bot Dependency</td><td class="grade-c"><strong>C-</strong></td><td>24.9% of all commits are bots</td><td>199/800 bot commits</td></tr>
+</tbody>
+</table>
+
+<!-- ==================== POWER STRUCTURE ==================== -->
+<div class="page-break"></div>
+<h1>The Power Structure</h1>
+
+<h2>Commit Authorship (800 commits, 601 human)</h2>
+
+<table>
+<thead><tr><th>Author</th><th>Commits</th><th>Share</th><th>Distribution</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td><strong>Kayvan Sylvan</strong> (ksylvan)</td><td class="num">510</td><td class="num"><strong>84.9%</strong></td><td><div class="bar" style="width:85%; background: linear-gradient(90deg, #0f766e, #14b8a6);"></div></td><td><span class="tag tag-core">Lead Maintainer</span></td></tr>
+<tr><td><strong>berniegreen</strong></td><td class="num">9</td><td class="num">1.5%</td><td><div class="bar" style="width:2%; background: linear-gradient(90deg, #22c55e, #4ade80);"></div></td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td><strong>Sathvik C</strong></td><td class="num">7</td><td class="num">1.2%</td><td><div class="bar" style="width:1.5%; background: linear-gradient(90deg, #22c55e, #4ade80);"></div></td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td><strong>Daniel Miessler</strong></td><td class="num">6</td><td class="num">1.0%</td><td><div class="bar" style="width:1.2%; background: linear-gradient(90deg, #8b5cf6, #a78bfa);"></div></td><td><span class="tag tag-creator">Creator / Owner</span></td></tr>
+<tr><td><strong>Baker Tamory</strong></td><td class="num">5</td><td class="num">0.8%</td><td><div class="bar" style="width:1%;"></div></td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td><strong>Prax Lannister</strong></td><td class="num">5</td><td class="num">0.8%</td><td><div class="bar" style="width:1%;"></div></td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td><strong>majiayu000</strong></td><td class="num">5</td><td class="num">0.8%</td><td><div class="bar" style="width:1%;"></div></td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td><strong>Nick Skriloff</strong></td><td class="num">5</td><td class="num">0.8%</td><td><div class="bar" style="width:1%;"></div></td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td><strong>Bob Vandevliet</strong></td><td class="num">4</td><td class="num">0.7%</td><td><div class="bar" style="width:0.8%;"></div></td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td><strong>lif</strong></td><td class="num">4</td><td class="num">0.7%</td><td><div class="bar" style="width:0.8%;"></div></td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td class="dim">Other 28 contributors</td><td class="num">41</td><td class="num">6.8%</td><td><div class="bar" style="width:7%; background: linear-gradient(90deg, #22c55e, #4ade80);"></div></td><td><span class="tag tag-community">Community</span></td></tr>
+</tbody>
+</table>
+
+<div class="stat-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+    <div class="stat-box"><div class="val" style="color: #0f766e;">84.9%</div><div class="desc">ksylvan (Single Maintainer)</div></div>
+    <div class="stat-box"><div class="val" style="color: #22c55e;">14.1%</div><div class="desc">All Other Humans</div></div>
+    <div class="stat-box"><div class="val" style="color: #64748b;">24.9%</div><div class="desc">Bot Traffic (of total 800)</div></div>
+</div>
+
+<h2>The Succession Pattern: Creator to Delegate</h2>
+<p>The all-time git shortlog tells the full story. Daniel Miessler built Fabric from scratch (773 all-time commits), but starting mid-2025, Kayvan Sylvan took over active development (949 all-time commits, and 510 of the last 600 human commits). This is a <strong>delegation succession</strong>: the creator retains ownership and brand authority while a delegate does all the engineering work.</p>
+
+<div class="callout callout-warning">
+    <strong>The BDFL Paradox: Present in Name, Absent in Code</strong>
+    danielmiessler has 0 PRs in our 500-PR sample and only 6 commits (mostly README/docs) in the last 800 commits. His most recent code contribution was January 2026 (a docs update). Yet the project carries his name, his 40.5K stars, and his brand. ksylvan is the <em>de facto</em> BDFL doing the work; danielmiessler is the <em>de jure</em> owner holding the keys.
+</div>
+
+<!-- ==================== GOVERNANCE TIMELINE ==================== -->
+<h1 style="page-break-before: always;">Governance Timeline &amp; Entropy</h1>
+
+<h2>The Entropy Dashboard</h2>
+<p>Shannon entropy measures contributor diversity. Higher = more distributed. Fabric's entropy profile reveals the most extreme concentration we have measured.</p>
+
+<table>
+<thead><tr><th>Data Source</th><th>Author Entropy (bits)</th><th>Unique Authors</th><th>Interpretation</th></tr></thead>
+<tbody>
+<tr><td>Issues (500)</td><td class="grade-a"><strong>7.95</strong></td><td>359</td><td>Excellent &mdash; broad community engagement</td></tr>
+<tr><td>Pull Requests (500)</td><td class="grade-c"><strong>4.11</strong></td><td>120</td><td>Moderate &mdash; one maintainer dominant</td></tr>
+<tr><td>Commits (800)</td><td class="grade-f"><strong>2.07</strong></td><td>41</td><td>Severe &mdash; single-person concentration</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-critical">
+    <strong>The 5.88-bit entropy gap</strong> between issues (7.95) and commits (2.07) is the largest we have measured in any project. For comparison: React's gap is 4.83 bits, Effect-TS's is 3.16 bits. Fabric has a vibrant user community filing issues and requesting features, but a single person converts those into code. The information funnel is catastrophically narrow.
+</div>
+
+<h2>Monthly Bus Factor &amp; Velocity</h2>
+<table style="font-size: 7.5pt;">
+<thead><tr><th>Month</th><th>Commits</th><th>Human</th><th>Authors</th><th>Bus Factor (80%)</th><th>Top Author</th><th>Top Share</th></tr></thead>
+<tbody>
+<tr>
+    <td class="mono">2025-08</td>
+    <td class="num">30</td>
+    <td class="num">20</td>
+    <td class="num">4</td>
+    <td class="num grade-f"><strong>1</strong></td>
+    <td>Kayvan Sylvan</td>
+    <td class="num grade-f">95%</td>
+</tr>
+<tr>
+    <td class="mono">2025-09</td>
+    <td class="num">63</td>
+    <td class="num">45</td>
+    <td class="num">7</td>
+    <td class="num grade-f"><strong>1</strong></td>
+    <td>Kayvan Sylvan</td>
+    <td class="num grade-f">84%</td>
+</tr>
+<tr>
+    <td class="mono">2025-10</td>
+    <td class="num">24</td>
+    <td class="num">17</td>
+    <td class="num">10</td>
+    <td class="num grade-c"><strong>4</strong></td>
+    <td>Nick Skriloff</td>
+    <td class="num grade-a">29%</td>
+</tr>
+<tr>
+    <td class="mono">2025-11</td>
+    <td class="num">75</td>
+    <td class="num">51</td>
+    <td class="num">7</td>
+    <td class="num grade-f"><strong>1</strong></td>
+    <td>Kayvan Sylvan</td>
+    <td class="num grade-f">94%</td>
+</tr>
+<tr>
+    <td class="mono">2025-12</td>
+    <td class="num">137</td>
+    <td class="num">81</td>
+    <td class="num">11</td>
+    <td class="num grade-f"><strong>2</strong></td>
+    <td>Kayvan Sylvan</td>
+    <td class="num grade-f">73%</td>
+</tr>
+<tr>
+    <td class="mono">2026-01</td>
+    <td class="num">209</td>
+    <td class="num">176</td>
+    <td class="num">11</td>
+    <td class="num grade-f"><strong>1</strong></td>
+    <td>Kayvan Sylvan</td>
+    <td class="num grade-f">90%</td>
+</tr>
+<tr>
+    <td class="mono">2026-02</td>
+    <td class="num">157</td>
+    <td class="num">130</td>
+    <td class="num">9</td>
+    <td class="num grade-f"><strong>1</strong></td>
+    <td>Kayvan Sylvan</td>
+    <td class="num grade-f">93%</td>
+</tr>
+<tr>
+    <td class="mono">2026-03</td>
+    <td class="num">89</td>
+    <td class="num">65</td>
+    <td class="num">10</td>
+    <td class="num grade-f"><strong>2</strong></td>
+    <td>Kayvan Sylvan</td>
+    <td class="num grade-f">71%</td>
+</tr>
+<tr>
+    <td class="mono">2026-04</td>
+    <td class="num">18</td>
+    <td class="num">16</td>
+    <td class="num">3</td>
+    <td class="num grade-f"><strong>1</strong></td>
+    <td>Kayvan Sylvan</td>
+    <td class="num grade-f">94%</td>
+</tr>
+</tbody>
+</table>
+
+<div class="callout callout-critical">
+    <strong>Bus factor = 1 in 7 of 9 months.</strong>
+    October 2025 is the only month where ksylvan was not the dominant author &mdash; and that month had the lowest commit count (24). Every month with meaningful velocity has ksylvan writing 71-95% of all human code. The project is one vacation, one illness, or one departure from stopping entirely.
+</div>
+
+<h2>Velocity Trend</h2>
+<p>Commit velocity surged from 30/month (Aug 2025) to a peak of 209/month (Jan 2026), driven almost entirely by ksylvan's acceleration. The velocity is impressive for a single maintainer, but it is inherently fragile.</p>
+
+<div class="hbar-row"><div class="hbar-label">2025-08</div><div class="hbar-track"><div class="hbar-fill teal" style="width:14%">30</div></div></div>
+<div class="hbar-row"><div class="hbar-label">2025-09</div><div class="hbar-track"><div class="hbar-fill teal" style="width:30%">63</div></div></div>
+<div class="hbar-row"><div class="hbar-label">2025-10</div><div class="hbar-track"><div class="hbar-fill slate" style="width:11%">24</div></div></div>
+<div class="hbar-row"><div class="hbar-label">2025-11</div><div class="hbar-track"><div class="hbar-fill teal" style="width:36%">75</div></div></div>
+<div class="hbar-row"><div class="hbar-label">2025-12</div><div class="hbar-track"><div class="hbar-fill teal" style="width:66%">137</div></div></div>
+<div class="hbar-row"><div class="hbar-label">2026-01</div><div class="hbar-track"><div class="hbar-fill teal" style="width:100%">209</div></div></div>
+<div class="hbar-row"><div class="hbar-label">2026-02</div><div class="hbar-track"><div class="hbar-fill teal" style="width:75%">157</div></div></div>
+<div class="hbar-row"><div class="hbar-label">2026-03</div><div class="hbar-track"><div class="hbar-fill teal" style="width:43%">89</div></div></div>
+<div class="hbar-row"><div class="hbar-label">2026-04</div><div class="hbar-track"><div class="hbar-fill slate" style="width:9%">18</div></div></div>
+
+<div class="callout callout-info">
+    <strong>vajra temporal trend: author entropy direction = volatile (slope -0.029, R&#178; = 0.02)</strong>
+    The near-zero R&#178; means there is no trend in contributor diversity &mdash; it oscillates around ksylvan's dominance. The only outlier month (Oct 2025, entropy 2.97) coincides with ksylvan's lowest commit share, suggesting community contributions surge only when the maintainer pauses.
+</div>
+
+<!-- ==================== TWO-CLASS MERGE SYSTEM ==================== -->
+<h1 style="page-break-before: always;">The Two-Class Merge System</h1>
+
+<div class="two-col">
+<div>
+<h3>Merge Rates</h3>
+<div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="stat-box"><div class="val grade-a">98.0%</div><div class="desc">Core Merge Rate</div></div>
+    <div class="stat-box"><div class="val grade-b">62.9%</div><div class="desc">Community Merge Rate</div></div>
+</div>
+</div>
+<div>
+<h3>Time to Merge (median)</h3>
+<div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="stat-box"><div class="val grade-a">0.4 hrs</div><div class="desc">Core (ksylvan)</div></div>
+    <div class="stat-box"><div class="val grade-c">24.7 hrs</div><div class="desc">Community</div></div>
+</div>
+</div>
+</div>
+
+<p>The merge system is surprisingly healthy compared to corporate OSS projects. Community PRs merge at <strong>62.9%</strong> &mdash; vastly better than React's 10.0% or Effect-TS's 45.9%. The speed gap of <strong>65x</strong> is large but expected: ksylvan self-merges in minutes while community PRs wait for his review cycle.</p>
+
+<h2>Merge Rate by Intent</h2>
+<table>
+<thead><tr><th>Intent</th><th>Total</th><th>Core Merge Rate</th><th>Community Merge Rate</th><th>Signal</th></tr></thead>
+<tbody>
+<tr><td>Features</td><td>214</td><td class="grade-a">100%</td><td class="grade-b"><strong>65%</strong></td><td class="grade-a">Most open category</td></tr>
+<tr><td>Bug fixes</td><td>105</td><td class="grade-a">96%</td><td class="grade-b">72%</td><td class="grade-a">Community fixes welcomed</td></tr>
+<tr><td>Chore / deps</td><td>57</td><td class="grade-a">94%</td><td class="grade-c">36%</td><td class="grade-c">Dep updates filtered</td></tr>
+<tr><td>Other</td><td>78</td><td class="grade-a">100%</td><td class="grade-c">52%</td><td class="grade-c">Mixed</td></tr>
+<tr><td>Refactors</td><td>23</td><td class="grade-a">88%</td><td class="grade-c">29%</td><td class="grade-c">Architectural caution</td></tr>
+<tr><td>Docs</td><td>20</td><td class="grade-a">100%</td><td class="grade-a">88%</td><td class="grade-a">Very welcoming</td></tr>
+<tr><td>Tests</td><td>3</td><td class="grade-a">100%</td><td class="grade-c">50%</td><td class="dim">Small sample</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-good">
+    <strong>Community contributions are genuinely welcomed.</strong>
+    Unlike React (10% community merge) or corporate-gated projects, Fabric merges 62.9% of community PRs. Bug fixes merge at 72%, features at 65%, and docs at 88%. This is one of the healthiest community merge patterns we have measured. ksylvan appears to be an inclusive maintainer who reviews and accepts outside contributions.
+</div>
+
+<h2>Top Community Contributors (by PRs)</h2>
+<table>
+<thead><tr><th>Contributor</th><th>PRs</th><th>Merged</th><th>Merge Rate</th><th>Focus</th></tr></thead>
+<tbody>
+<tr><td>jmd1010</td><td>16</td><td>12</td><td class="grade-b">75%</td><td>Features / core improvements</td></tr>
+<tr><td>majiayu000</td><td>8</td><td>6</td><td class="grade-b">75%</td><td>Bug fixes, features</td></tr>
+<tr><td>mattjoyce</td><td>8</td><td>7</td><td class="grade-a">88%</td><td>Active community contributor</td></tr>
+<tr><td>marcas756</td><td>8</td><td>3</td><td class="grade-c">38%</td><td>Mixed acceptance</td></tr>
+<tr><td>sosacrazy126</td><td>8</td><td>1</td><td class="grade-f">12%</td><td>Low acceptance</td></tr>
+<tr><td>praxstack</td><td>6</td><td>3</td><td class="grade-c">50%</td><td>Features</td></tr>
+<tr><td>davejpeters</td><td>6</td><td>4</td><td class="grade-b">67%</td><td>Features</td></tr>
+<tr><td>wmahfoudh</td><td>5</td><td>4</td><td class="grade-a">80%</td><td>Bug fixes</td></tr>
+<tr><td>tonymet</td><td>5</td><td>2</td><td class="grade-c">40%</td><td>Tooling</td></tr>
+</tbody>
+</table>
+
+<p>The community contributor funnel is active, with 9 contributors submitting 5+ PRs. Acceptance rates vary by individual (12%-88%), suggesting ksylvan evaluates PRs on quality rather than applying a blanket policy. This is a healthy pattern.</p>
+
+<!-- ==================== CONTRIBUTOR LIFECYCLE ==================== -->
+<h1 style="margin-top: 24px;">Contributor Lifecycle &amp; The Delegation Model</h1>
+
+<h2>Contributor Pyramid</h2>
+<div class="stat-grid">
+    <div class="stat-box"><div class="val grade-c">44.7%</div><div class="desc">One-Commit Contributors</div></div>
+    <div class="stat-box"><div class="val">38</div><div class="desc">Human Authors (800 commits)</div></div>
+    <div class="stat-box"><div class="val grade-f">1</div><div class="desc">10+ Commit Authors</div></div>
+    <div class="stat-box"><div class="val grade-f">1</div><div class="desc">100+ Commit Authors</div></div>
+</div>
+
+<p>Fabric's contributor pyramid is the most extreme in our portfolio: <strong>one person at the top, everyone else at the bottom</strong>. Of 38 human authors, 17 (44.7%) made exactly one commit. Only one author (ksylvan) has more than 9 commits in the sample. The gap between the #1 contributor (510 commits) and #2 (9 commits) is <strong>56:1</strong> &mdash; the largest ratio we have measured.</p>
+
+<h2>The Delegation Model Explained</h2>
+<table>
+<thead><tr><th>Role</th><th>Person</th><th>Commits (recent 800)</th><th>PRs</th><th>Issue Comments</th><th>Actual Function</th></tr></thead>
+<tbody>
+<tr><td><span class="tag tag-creator">Creator / Owner</span></td><td><strong>danielmiessler</strong></td><td class="num">6 (1.0%)</td><td class="num">0</td><td class="num">-</td><td>Brand, vision, README, sponsorship</td></tr>
+<tr><td><span class="tag tag-core">Lead Maintainer</span></td><td><strong>ksylvan</strong></td><td class="num">510 (84.9%)</td><td class="num">248</td><td class="num">843</td><td>All code, all reviews, all support</td></tr>
+<tr><td><span class="tag tag-bot">Bots</span></td><td>github-actions, dependabot, etc.</td><td class="num">199 (24.9%)</td><td class="num">31</td><td class="num">-</td><td>CI, releases, dependency updates</td></tr>
+<tr><td><span class="tag tag-community">Community</span></td><td>37 other humans</td><td class="num">85 (14.1%)</td><td class="num">221</td><td class="num">varied</td><td>Features, fixes, patterns</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info">
+    <strong>The Delegation Model vs the BDFL Model</strong>
+    Fabric is not a classic BDFL project (where the creator codes everything). It is a <em>delegation</em> model: the creator retains ownership and sets direction while a delegate handles all engineering. This is common in the AI/infosec creator economy &mdash; the founder's value is the idea and the brand, not the code. The risk is that the delegate has all the institutional knowledge but none of the ownership leverage.
+</div>
+
+<h2>Contributor Churn</h2>
+<table style="font-size: 7.5pt;">
+<thead><tr><th>Month</th><th>New</th><th>Returning</th><th>Churned</th><th>Active</th><th>Net Growth</th></tr></thead>
+<tbody>
+<tr><td class="mono">2025-08</td><td class="num grade-a">4</td><td class="num">0</td><td class="num">0</td><td class="num">4</td><td class="num grade-a">+4</td></tr>
+<tr><td class="mono">2025-09</td><td class="num grade-a">4</td><td class="num">3</td><td class="num">1</td><td class="num">7</td><td class="num grade-a">+3</td></tr>
+<tr><td class="mono">2025-10</td><td class="num grade-a">4</td><td class="num">6</td><td class="num">2</td><td class="num">10</td><td class="num grade-a">+2</td></tr>
+<tr><td class="mono">2025-11</td><td class="num">3</td><td class="num">4</td><td class="num grade-c">6</td><td class="num">7</td><td class="num grade-f">-3</td></tr>
+<tr><td class="mono">2025-12</td><td class="num grade-a">8</td><td class="num">3</td><td class="num">4</td><td class="num">11</td><td class="num grade-a">+4</td></tr>
+<tr><td class="mono">2026-01</td><td class="num grade-a">6</td><td class="num">5</td><td class="num grade-c">8</td><td class="num">11</td><td class="num grade-f">-2</td></tr>
+<tr><td class="mono">2026-02</td><td class="num">5</td><td class="num">4</td><td class="num grade-c">7</td><td class="num">9</td><td class="num grade-f">-2</td></tr>
+<tr><td class="mono">2026-03</td><td class="num grade-a">6</td><td class="num">4</td><td class="num">6</td><td class="num">10</td><td class="num">0</td></tr>
+<tr><td class="mono">2026-04</td><td class="num">1</td><td class="num">2</td><td class="num grade-c">8</td><td class="num grade-f">3</td><td class="num grade-f">-7</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-warning">
+    <strong>Mean net contributor growth: -0.11/month</strong>
+    The contributor pool is slowly shrinking. New contributors arrive each month (3-8) but churn is high (4-8). The project is not building a sustainable contributor base &mdash; community members contribute a patch and leave. Only ksylvan persists as a constant. Contributor half-life: &lt;1 day (vajra measurement), confirming drive-by contribution patterns.
+</div>
+
+<!-- ==================== COMPARISON ==================== -->
+<h2>Cross-Project Comparison: The Spectrum of OSS Governance</h2>
+<p>Placing Fabric alongside our other analyzed projects reveals where it sits on the governance spectrum. Each project represents a different model.</p>
+
+<table>
+<thead><tr><th>Metric</th><th>Fabric (Delegate)</th><th>React (Corporate)</th><th>Effect-TS (BDFL)</th><th>Healthy Range</th></tr></thead>
+<tbody>
+<tr><td><strong>Bus Factor (80%)</strong></td><td class="grade-f"><strong>1</strong></td><td class="grade-b">4-10</td><td class="grade-f">1-2</td><td>&gt;3</td></tr>
+<tr><td><strong>Top Author Share</strong></td><td class="grade-f"><strong>84.9%</strong></td><td class="grade-b">23.4%</td><td class="grade-f">32.9%</td><td>&lt;25%</td></tr>
+<tr><td><strong>Commit Author Entropy</strong></td><td class="grade-f"><strong>2.07 bits</strong></td><td class="grade-c">3.71 bits</td><td class="grade-c">3.45 bits</td><td>&gt;4.0 bits</td></tr>
+<tr><td><strong>Issue Author Entropy</strong></td><td class="grade-a"><strong>7.95 bits</strong></td><td class="grade-a">8.54 bits</td><td class="grade-a">6.61 bits</td><td>&gt;5.0 bits</td></tr>
+<tr><td><strong>Entropy Gap</strong></td><td class="grade-f"><strong>5.88 bits</strong></td><td class="grade-c">4.83 bits</td><td class="grade-c">3.16 bits</td><td>&lt;2.0 bits</td></tr>
+<tr><td><strong>Community Merge Rate</strong></td><td class="grade-b"><strong>62.9%</strong></td><td class="grade-f">10.0%</td><td class="grade-c">45.9%</td><td>&gt;40%</td></tr>
+<tr><td><strong>Merge Speed Gap</strong></td><td class="grade-f"><strong>65x</strong></td><td class="grade-c">15.9x</td><td class="grade-f">87x</td><td>&lt;5x</td></tr>
+<tr><td><strong>Fix Rate</strong></td><td class="grade-c"><strong>18.4%</strong></td><td class="grade-c">22.8%</td><td class="grade-c">20.2%</td><td>&lt;15%</td></tr>
+<tr><td><strong>One-Commit Rate</strong></td><td class="grade-c"><strong>44.7%</strong></td><td class="grade-c">59.1%</td><td class="grade-c">59.1%</td><td>&lt;40%</td></tr>
+<tr><td><strong>Close Rate (Issues)</strong></td><td class="grade-a"><strong>96.8%</strong></td><td class="grade-b">65%</td><td class="grade-b">~70%</td><td>&gt;70%</td></tr>
+<tr><td><strong>Gini Coefficient</strong></td><td class="grade-f"><strong>0.878</strong></td><td>0.72</td><td>0.78</td><td>&lt;0.6</td></tr>
+<tr><td><strong>Governance Model</strong></td><td>Delegation</td><td>Corporate BDFL</td><td>Individual BDFL</td><td>&mdash;</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info">
+    <strong>Fabric: Best Community Reception, Worst Bus Factor</strong>
+    Fabric is a paradox. It has the best community merge rate (62.9% vs React's 10%), the best issue close rate (96.8%), and the lowest one-commit rate (44.7%). But it also has the worst bus factor (1), highest top-author share (84.9%), and widest entropy gap (5.88 bits). ksylvan is doing everything right as a maintainer &mdash; the problem is that there is only one of him.
+</div>
+
+<!-- ==================== ISSUE HEALTH ==================== -->
+<h1 style="page-break-before: always;">Issue Health &amp; Community Voice</h1>
+
+<h2>Overview</h2>
+<div class="stat-grid">
+    <div class="stat-box"><div class="val grade-a">96.8%</div><div class="desc">Close Rate</div></div>
+    <div class="stat-box"><div class="val grade-a">11.4%</div><div class="desc">Zero-Comment Issues</div></div>
+    <div class="stat-box"><div class="val grade-c">40.8%</div><div class="desc">No Maintainer Response</div></div>
+    <div class="stat-box"><div class="val">4.3</div><div class="desc">Avg Comments per Issue</div></div>
+</div>
+
+<h2>Monthly Issue Trend</h2>
+<table style="font-size: 7.5pt;">
+<thead><tr><th>Month</th><th>Issues Filed</th><th>Closed %</th><th>Zero-Comment %</th><th>No Maintainer %</th><th>Avg Comments</th></tr></thead>
+<tbody>
+<tr><td>2024-08</td><td>50</td><td class="grade-a">98%</td><td class="grade-a">6%</td><td class="grade-f">72%</td><td>3.8</td></tr>
+<tr><td>2024-09</td><td>58</td><td class="grade-a">98%</td><td class="grade-a">5%</td><td class="grade-f">76%</td><td>3.5</td></tr>
+<tr><td>2024-10</td><td>47</td><td class="grade-a">98%</td><td class="grade-a">6%</td><td class="grade-c">55%</td><td>3.8</td></tr>
+<tr><td>2024-11</td><td>28</td><td class="grade-a">96%</td><td class="grade-a">4%</td><td class="grade-c">46%</td><td>4.3</td></tr>
+<tr><td>2024-12</td><td>27</td><td class="grade-a">96%</td><td class="grade-a">4%</td><td class="grade-a">30%</td><td>5.3</td></tr>
+<tr><td>2025-01</td><td>15</td><td class="grade-a">100%</td><td class="grade-a">0%</td><td class="grade-c">40%</td><td>3.1</td></tr>
+<tr><td>2025-02</td><td>19</td><td class="grade-a">100%</td><td class="grade-a">0%</td><td class="grade-c">42%</td><td>2.7</td></tr>
+<tr><td>2025-03</td><td>31</td><td class="grade-a">97%</td><td class="grade-c">13%</td><td class="grade-a">29%</td><td>5.6</td></tr>
+<tr><td>2025-04</td><td>18</td><td class="grade-a">94%</td><td class="grade-c">11%</td><td class="grade-a">22%</td><td>2.7</td></tr>
+<tr><td>2025-05</td><td>15</td><td class="grade-a">100%</td><td class="grade-c">13%</td><td class="grade-a">20%</td><td>5.7</td></tr>
+<tr><td>2025-06</td><td>26</td><td class="grade-a">100%</td><td class="grade-c">15%</td><td class="grade-a">15%</td><td>7.5</td></tr>
+<tr><td>2025-07</td><td>36</td><td class="grade-a">97%</td><td class="grade-c">17%</td><td class="grade-a">19%</td><td>4.5</td></tr>
+<tr><td>2025-08</td><td>29</td><td class="grade-a">97%</td><td class="grade-a">7%</td><td class="grade-a">7%</td><td>4.2</td></tr>
+<tr><td>2025-09</td><td>11</td><td class="grade-a">100%</td><td class="grade-c">27%</td><td class="grade-c">27%</td><td>8.8</td></tr>
+<tr><td>2025-10</td><td>13</td><td class="grade-a">100%</td><td class="grade-a">8%</td><td class="grade-a">8%</td><td>5.3</td></tr>
+<tr><td>2025-11</td><td>12</td><td class="grade-a">100%</td><td class="grade-c">25%</td><td class="grade-c">33%</td><td>6.1</td></tr>
+<tr><td>2025-12</td><td>26</td><td class="grade-a">92%</td><td class="grade-c">27%</td><td class="grade-c">31%</td><td>3.0</td></tr>
+<tr><td>2026-01</td><td>15</td><td class="grade-b">87%</td><td class="grade-c">27%</td><td class="grade-c">27%</td><td>3.8</td></tr>
+<tr><td>2026-02</td><td>14</td><td class="grade-a">93%</td><td class="grade-f">36%</td><td class="grade-c">50%</td><td>2.6</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-good">
+    <strong>Issue management is Fabric's strongest dimension.</strong>
+    96.8% close rate is exceptional &mdash; far better than React (65%), and among the best we have measured. The no-maintainer-response rate improved dramatically from 72% (Aug 2024) to 7% (Aug 2025), coinciding with ksylvan's takeover of maintainership. ksylvan's 843 issue comments (vs the second-place 121) show a maintainer who takes community support seriously.
+</div>
+
+<h2>Issue Categories</h2>
+<table>
+<thead><tr><th>Category</th><th>Count</th><th>Share</th><th>Close Rate</th><th>Signal</th></tr></thead>
+<tbody>
+<tr><td><strong>Bugs</strong></td><td class="num">225</td><td class="num">45.0%</td><td class="grade-a">97%</td><td class="grade-a">Actively triaged</td></tr>
+<tr><td><strong>Feature Requests</strong></td><td class="num">151</td><td class="num">30.2%</td><td class="grade-a">95%</td><td class="grade-a">Healthy demand signal</td></tr>
+<tr><td><strong>Questions</strong></td><td class="num">101</td><td class="num">20.2%</td><td class="grade-a">97%</td><td class="grade-c">High support load</td></tr>
+<tr><td><strong>Other</strong></td><td class="num">23</td><td class="num">4.6%</td><td class="grade-a">96%</td><td class="dim">Miscellaneous</td></tr>
+</tbody>
+</table>
+
+<p>The 20.2% question rate reveals that Fabric serves a community that includes many non-developers using AI prompts. These are not typical GitHub users &mdash; they need more hand-holding than a typical Go library. This support burden falls entirely on ksylvan.</p>
+
+<h2>Top Issue Commenters</h2>
+<table>
+<thead><tr><th>Commenter</th><th>Comments</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td><strong>ksylvan</strong></td><td class="num">843</td><td><span class="tag tag-core">Lead Maintainer</span></td></tr>
+<tr><td>eugeis</td><td class="num">121</td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td>mattjoyce</td><td class="num">69</td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td>tonymet</td><td class="num">46</td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td>officiallymarky</td><td class="num">36</td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td>xssdoctor</td><td class="num">23</td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td>jmd1010</td><td class="num">21</td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td>johnsaigle</td><td class="num">18</td><td><span class="tag tag-community">Community</span></td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-warning">
+    <strong>843 comments from one person is a burnout signal.</strong>
+    ksylvan's issue comment count is 7x the second-place contributor (121). He is not just writing all the code &mdash; he is also providing all the community support. This dual burden (engineering + support) is the classic precursor to maintainer burnout. Unlike React's team where support is distributed, Fabric's support is a one-person operation.
+</div>
+
+<!-- ==================== RELEASE HEALTH ==================== -->
+<h1 style="margin-top: 24px;">Release Cadence &amp; Stability</h1>
+
+<h2>Release Timeline (v1.4.x)</h2>
+<table>
+<thead><tr><th>Version</th><th>Date</th><th>Gap (days)</th><th>Significance</th></tr></thead>
+<tbody>
+<tr><td class="mono"><strong>v1.4.444</strong></td><td>Apr 9, 2026</td><td>0</td><td class="grade-a">Latest release (today)</td></tr>
+<tr><td class="mono">v1.4.443</td><td>Apr 9, 2026</td><td>0</td><td>Same-day patch</td></tr>
+<tr><td class="mono">v1.4.442</td><td>Mar 25, 2026</td><td>3</td><td>Patch</td></tr>
+<tr><td class="mono">v1.4.441</td><td>Mar 22, 2026</td><td>3</td><td>Patch</td></tr>
+<tr><td class="mono">v1.4.440</td><td>Mar 19, 2026</td><td>1</td><td>Patch</td></tr>
+<tr><td class="mono">v1.4.439</td><td>Mar 18, 2026</td><td>0</td><td>Same-day patch</td></tr>
+<tr><td class="mono">v1.4.438</td><td>Mar 18, 2026</td><td>2</td><td>Patch</td></tr>
+<tr><td class="mono">v1.4.437</td><td>Mar 16, 2026</td><td>1</td><td>Patch</td></tr>
+<tr><td class="mono">v1.4.436</td><td>Mar 15, 2026</td><td>0</td><td>Same-day patch</td></tr>
+<tr><td class="mono">v1.4.435</td><td>Mar 15, 2026</td><td>1</td><td>Patch</td></tr>
+</tbody>
+</table>
+
+<div class="stat-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+    <div class="stat-box"><div class="val" style="color: #14b8a6;">50</div><div class="desc">Total Releases (sample)</div></div>
+    <div class="stat-box"><div class="val" style="color: #8b5cf6;">444</div><div class="desc">Release Number</div></div>
+    <div class="stat-box"><div class="val" style="color: #22c55e;">~2/week</div><div class="desc">Release Frequency</div></div>
+</div>
+
+<div class="callout callout-info">
+    <strong>Hyper-frequent micro-releases.</strong>
+    Fabric has reached v1.4.444 &mdash; meaning 444 patch releases within the 1.4.x line. The release cadence averages roughly 2 releases per week, with some days seeing 2 releases. This is a "release early, release often" philosophy taken to an extreme. Every meaningful change gets its own version bump.
+</div>
+
+<h2>Code Stability: Fix Rate Analysis</h2>
+<div class="stat-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+    <div class="stat-box"><div class="val grade-c">18.4%</div><div class="desc">Fix Rate (147/800)</div></div>
+    <div class="stat-box"><div class="val grade-b">81.6%</div><div class="desc">Feature / Other Work</div></div>
+    <div class="stat-box"><div class="val grade-c">0.688</div><div class="desc">Intent Entropy (bits)</div></div>
+</div>
+
+<p>The 18.4% fix rate is moderate &mdash; better than React (22.8%) but still above the ideal 15% threshold. Given that Fabric is a younger project with rapid iteration, some fix churn is expected. The intent entropy of 0.688 bits shows a consistent split between fixes and new work.</p>
+
+<h2>Bot Analysis</h2>
+<table>
+<thead><tr><th>Bot</th><th>Commits</th><th>Share</th><th>Function</th></tr></thead>
+<tbody>
+<tr><td>github-actions[bot]</td><td class="num">148</td><td class="num">18.5%</td><td>CI/CD, automated releases</td></tr>
+<tr><td>Changelog Bot</td><td class="num">42</td><td class="num">5.3%</td><td>Automated changelog generation</td></tr>
+<tr><td>dependabot[bot]</td><td class="num">9</td><td class="num">1.1%</td><td>Dependency updates</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-warning">
+    <strong>24.9% of all commits are automated.</strong>
+    One in four commits is from a bot. This is high compared to React (5-10% bot traffic) and reflects ksylvan's investment in automation &mdash; a smart strategy for a single-maintainer project. The Changelog Bot alone generates 42 commits. When evaluating raw commit velocity, removing bots gives a more accurate picture of human productivity.
+</div>
+
+<!-- ==================== INVARIANT ANALYSIS ==================== -->
+<h1 style="margin-top: 24px;">Structural Analysis: Invariants &amp; Anomalies</h1>
+
+<h2>Invariant Analysis: Hidden Rules</h2>
+<p>vajra's invariant detection reveals the strongest field-to-field relationships in the commit data, exposing the hidden rules of how Fabric's development works.</p>
+
+<table>
+<thead><tr><th>Invariant</th><th>Strength</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td>author &rarr; email</td><td class="num grade-a"><strong>0.964</strong></td><td>Near-perfect author identity consistency</td></tr>
+<tr><td>email &rarr; subject</td><td class="num"><strong>0.217</strong></td><td>Commit messages are weakly author-specific</td></tr>
+<tr><td>author &rarr; subject</td><td class="num"><strong>0.215</strong></td><td>Low specialization &mdash; ksylvan works on everything</td></tr>
+<tr><td>author &rarr; intent</td><td class="num"><strong>0.177</strong></td><td>Author weakly predicts commit type</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info">
+    <strong>Low author &rarr; subject invariant (0.215) confirms the "does everything" pattern.</strong>
+    In React, title &rarr; author.id = 0.966, meaning each person works on their specialty. In Fabric, ksylvan's commits span every area: Go features, prompt patterns, CI/CD, docs, dependency management, i18n. There is no specialization because there is only one engineer.
+</div>
+
+<h2>Governance Metrics Summary</h2>
+<table>
+<thead><tr><th>Metric</th><th>Value</th><th>Interpretation</th></tr></thead>
+<tbody>
+<tr><td>Bus Factor (80%)</td><td class="num grade-f"><strong>2</strong></td><td>Overall = 2 (ksylvan + bots); human only = 1</td></tr>
+<tr><td>Bus Factor (50%)</td><td class="num grade-f"><strong>1</strong></td><td>One person accounts for &gt;50% of commits</td></tr>
+<tr><td>Author Entropy</td><td class="num grade-f"><strong>2.07 bits</strong></td><td>Well below 4.0-bit health threshold</td></tr>
+<tr><td>Gini Coefficient</td><td class="num grade-f"><strong>0.878</strong></td><td>Extreme inequality (1.0 = perfect inequality)</td></tr>
+<tr><td>Top-1 Share</td><td class="num grade-f"><strong>63.8%</strong></td><td>Including bots; human-only = 84.9%</td></tr>
+<tr><td>Top-3 Share</td><td class="num grade-f"><strong>87.5%</strong></td><td>Three "authors" (ksylvan, bots, bot) = 87.5%</td></tr>
+<tr><td>One-Commit Rate</td><td class="num grade-c"><strong>41.5%</strong></td><td>17 of 41 authors committed once</td></tr>
+<tr><td>Unique Authors</td><td class="num"><strong>41</strong></td><td>Including bots; 38 human</td></tr>
+</tbody>
+</table>
+
+<h2>PR vs Issue Population Divergence</h2>
+<table>
+<thead><tr><th>Metric</th><th>PRs</th><th>Issues</th><th>Divergence</th></tr></thead>
+<tbody>
+<tr><td>Author Entropy</td><td class="num">4.11 bits</td><td class="num">7.95 bits</td><td class="grade-c">3.84 bit gap</td></tr>
+<tr><td>Unique Authors</td><td class="num">120</td><td class="num">359</td><td class="grade-c">3x more issue filers</td></tr>
+<tr><td>Top Author</td><td>ksylvan (248)</td><td>ksylvan (51)</td><td class="dim">Same person leads both</td></tr>
+<tr><td>Author Overlap</td><td colspan="3" class="grade-c">Moderate &mdash; issue filers occasionally become PR authors</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info">
+    <strong>The PR-Issue entropy gap (3.84 bits) is smaller than the commit-issue gap (5.88 bits).</strong>
+    This means community members do submit PRs (120 unique PR authors), but their code does not always get merged into commits. The funnel narrows from 359 issue authors to 120 PR authors to 38 commit authors to 1 dominant committer. Each stage filters more aggressively.
+</div>
+
+<!-- ==================== METHODOLOGY ==================== -->
+<h1 style="margin-top: 24px;">Methodology</h1>
+
+<h2>Analysis Engine</h2>
+<p><strong>vajra</strong> &mdash; a deterministic semantic reduction engine for structured data. Every analysis in this report is reproducible: same input + same config = byte-identical output. No ML, no heuristics, no sentiment analysis. Pure information theory on structured data.</p>
+
+<h2>Algorithms Applied</h2>
+<table>
+<thead><tr><th>Algorithm</th><th>Purpose</th><th>Where Used</th></tr></thead>
+<tbody>
+<tr><td>Shannon Entropy</td><td>Value diversity / concentration</td><td>Author entropy across all data sources</td></tr>
+<tr><td>MAD (Median Absolute Deviation)</td><td>Robust outlier detection</td><td>Commit patterns, work hours</td></tr>
+<tr><td>Conditional Entropy H(Y|X)</td><td>Cross-field dependency</td><td>Author &rarr; intent, author &rarr; subject</td></tr>
+<tr><td>Jensen-Shannon Divergence</td><td>Distribution comparison</td><td>Core vs community, PR vs issue drift</td></tr>
+<tr><td>Gini Coefficient</td><td>Inequality measurement</td><td>Commit distribution (0.878)</td></tr>
+<tr><td>Temporal Windowing</td><td>Trend detection</td><td>Monthly commit velocity &amp; bus factor</td></tr>
+<tr><td>BLAKE3</td><td>Structural fingerprinting</td><td>Commit structure identity</td></tr>
+<tr><td>Contributor Churn</td><td>New/returning/churned tracking</td><td>Monthly contributor lifecycle</td></tr>
+</tbody>
+</table>
+
+<h2>Key Metrics Glossary</h2>
+<table>
+<thead><tr><th>Metric</th><th>Fabric Value</th><th>React Value</th><th>Effect-TS Value</th><th>Healthy Range</th></tr></thead>
+<tbody>
+<tr><td>Commit Author Entropy</td><td class="grade-f"><strong>2.07 bits</strong></td><td class="grade-c">3.71 bits</td><td class="grade-c">3.45 bits</td><td>&gt;4.0 bits</td></tr>
+<tr><td>Issue Author Entropy</td><td class="grade-a"><strong>7.95 bits</strong></td><td class="grade-a">8.54 bits</td><td class="grade-a">6.61 bits</td><td>&gt;5.0 bits</td></tr>
+<tr><td>Entropy Gap</td><td class="grade-f"><strong>5.88 bits</strong></td><td class="grade-c">4.83 bits</td><td class="grade-c">3.16 bits</td><td>&lt;2.0 bits</td></tr>
+<tr><td>Bus Factor (80%)</td><td class="grade-f"><strong>1</strong></td><td class="grade-b">4-10</td><td class="grade-f">1-2</td><td>&gt;3</td></tr>
+<tr><td>Gini Coefficient</td><td class="grade-f"><strong>0.878</strong></td><td>0.72</td><td>0.78</td><td>&lt;0.6</td></tr>
+<tr><td>Community Merge Rate</td><td class="grade-b"><strong>62.9%</strong></td><td class="grade-f">10.0%</td><td class="grade-c">45.9%</td><td>&gt;40%</td></tr>
+<tr><td>Fix Rate</td><td class="grade-c"><strong>18.4%</strong></td><td class="grade-c">22.8%</td><td class="grade-c">20.2%</td><td>&lt;15%</td></tr>
+<tr><td>One-Commit Contributors</td><td class="grade-c"><strong>44.7%</strong></td><td class="grade-c">59.1%</td><td class="grade-c">59.1%</td><td>&lt;40%</td></tr>
+</tbody>
+</table>
+
+<h2>Data Sources</h2>
+<table>
+<thead><tr><th>Source</th><th>Records</th><th>Method</th></tr></thead>
+<tbody>
+<tr><td>Git commits</td><td>800</td><td><code>git log</code> &rarr; JSON &rarr; vajra stats/invariants/temporal/governance/score</td></tr>
+<tr><td>Pull requests</td><td>500</td><td>GitHub GraphQL API &rarr; flatten &rarr; vajra stats</td></tr>
+<tr><td>Issues</td><td>500</td><td>GitHub GraphQL API &rarr; flatten &rarr; vajra stats</td></tr>
+<tr><td>Releases</td><td>50</td><td>GitHub API &rarr; release timeline analysis</td></tr>
+<tr><td>Temporal analysis</td><td>800</td><td>vajra temporal (monthly windowed stats)</td></tr>
+<tr><td>Core team detection</td><td>800</td><td>vajra core-team (email domain + pareto)</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info" style="margin-top: 20px;">
+    <strong>About This Report</strong>
+    Generated on April 9, 2026 using vajra v0.1.0. All findings are based on publicly available data from the danielmiessler/fabric GitHub repository. This report is intended as a constructive health assessment, not a criticism of any individual contributor. Kayvan Sylvan's stewardship of Fabric is exemplary in terms of community engagement and velocity. The structural risks identified here are inherent to the single-maintainer model, not to his capabilities.
+</div>
+
+<div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--slate-200);">
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgNTAiIGZpbGw9Im5vbmUiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJ2YWpyYUdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6I2Y1OWUwYiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNlZjQ0NDQiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxwb2x5Z29uIHBvaW50cz0iMjUsNSAzMCwyMCA0NSwyMCAzMywzMCAzNyw0NSAyNSwzNSAxMyw0NSAxNywzMCA1LDIwIDIwLDIwIiBmaWxsPSJ1cmwoI3ZhanJhR3JhZCkiLz4KICA8dGV4dCB4PSI1NSIgeT0iMzUiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIG1vbm9zcGFjZSIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCN2YWpyYUdyYWQpIj52YWpyYTwvdGV4dD4KPC9zdmc+Cg==" style="width: 120px; opacity: 0.6;" alt="vajra">
+    <p class="dim" style="font-size: 7pt; margin-top: 8px;">Deterministic semantic reduction &mdash; vajra.dev</p>
+</div>
+
+</body>
+</html>
