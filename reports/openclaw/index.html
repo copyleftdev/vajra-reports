@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+@page {
+    size: A4;
+    margin: 20mm 18mm 25mm 18mm;
+    @top-right {
+        content: "CONFIDENTIAL";
+        font-size: 7pt;
+        color: #94a3b8;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+    @bottom-center {
+        content: counter(page) " / " counter(pages);
+        font-size: 8pt;
+        color: #64748b;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+    @bottom-left {
+        content: "vajra deterministic analysis";
+        font-size: 7pt;
+        color: #94a3b8;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+}
+
+@page :first {
+    margin-top: 0;
+    @top-right { content: none; }
+    @bottom-center { content: none; }
+    @bottom-left { content: none; }
+}
+
+:root {
+    --claw-red: #ef4444;
+    --claw-orange: #f97316;
+    --claw-warm: #dc2626;
+    --purple: #8b5cf6;
+    --blue: #3b82f6;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --green: #22c55e;
+    --slate-50: #f8fafc;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-300: #cbd5e1;
+    --slate-400: #94a3b8;
+    --slate-500: #64748b;
+    --slate-600: #475569;
+    --slate-700: #334155;
+    --slate-800: #1e293b;
+    --slate-900: #0f172a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 9pt;
+    line-height: 1.5;
+    color: var(--slate-800);
+    background: white;
+}
+
+/* === COVER PAGE === */
+.cover {
+    page-break-after: always;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, #0f172a 0%, #1a0a0a 40%, #2d1008 100%);
+    color: white;
+    margin: -20mm -18mm 0 -18mm;
+    padding: 40mm 30mm;
+}
+
+.cover-icon {
+    font-size: 72pt;
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+.cover h1 {
+    font-size: 36pt;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #ef4444, #f97316);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+}
+.cover h2 {
+    font-size: 14pt;
+    font-weight: 400;
+    color: #94a3b8;
+    margin-bottom: 40px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+.cover-meta {
+    font-size: 9pt;
+    color: #64748b;
+    line-height: 2;
+}
+.cover-meta strong { color: #94a3b8; }
+.cover-divider {
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, #ef4444, #f97316);
+    margin: 30px auto;
+    border-radius: 1px;
+}
+.cover-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border: 1px solid #7f1d1d;
+    border-radius: 20px;
+    font-size: 7.5pt;
+    color: #ef4444;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 20px;
+}
+
+/* === SECTIONS === */
+.section { page-break-before: always; }
+.section:first-of-type { page-break-before: auto; }
+.section-continue { page-break-before: avoid; }
+
+table { page-break-inside: auto; }
+tr { page-break-inside: avoid; }
+thead { display: table-header-group; }
+.callout { page-break-inside: avoid; }
+.stat-grid { page-break-inside: avoid; }
+.health-item { page-break-inside: avoid; }
+
+h1 {
+    font-size: 20pt;
+    font-weight: 800;
+    color: var(--slate-900);
+    letter-spacing: -0.02em;
+    margin: 0 0 6px 0;
+    padding-bottom: 8px;
+    border-bottom: 3px solid;
+    border-image: linear-gradient(90deg, #ef4444, #f97316) 1;
+}
+
+h2 {
+    font-size: 13pt;
+    font-weight: 700;
+    color: var(--slate-800);
+    margin: 18px 0 8px 0;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--slate-200);
+}
+
+h3 {
+    font-size: 10pt;
+    font-weight: 700;
+    color: var(--slate-700);
+    margin: 14px 0 6px 0;
+}
+
+p { margin: 6px 0; color: var(--slate-700); }
+
+/* === TABLES === */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 16px 0;
+    font-size: 8pt;
+}
+
+thead th {
+    background: var(--slate-800);
+    color: white;
+    font-weight: 600;
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 6px 8px;
+    text-align: left;
+    border: none;
+}
+
+tbody td {
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--slate-100);
+    vertical-align: middle;
+}
+
+tbody tr:nth-child(even) { background: var(--slate-50); }
+tbody tr:hover { background: #fef2f2; }
+
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 7.5pt; }
+.dim { color: var(--slate-400); }
+.label-cell { font-weight: 500; max-width: 200px; }
+
+/* === GRADE COLORS === */
+.grade-a { color: var(--green); }
+.grade-b { color: var(--blue); }
+.grade-c { color: var(--amber); }
+.grade-f { color: var(--red); }
+.winner { font-weight: 700; }
+
+/* === TAGS === */
+.tag {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 6.5pt;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.tag-core { background: #fef2f2; color: #dc2626; }
+.tag-community { background: #dcfce7; color: #166534; }
+.tag-creator { background: #ede9fe; color: #6d28d9; }
+.tag-bot { background: #f1f5f9; color: #64748b; }
+.tag-maintainer { background: #fff7ed; color: #c2410c; }
+
+/* === BARS === */
+.bar {
+    height: 10px;
+    background: linear-gradient(90deg, #ef4444, #f97316);
+    border-radius: 2px;
+    min-width: 2px;
+}
+
+/* === CALLOUT BOXES === */
+.callout {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 12px 0;
+    font-size: 8.5pt;
+}
+.callout-critical {
+    background: #fef2f2;
+    border-left: 4px solid var(--red);
+}
+.callout-warning {
+    background: #fffbeb;
+    border-left: 4px solid var(--amber);
+}
+.callout-info {
+    background: #eff6ff;
+    border-left: 4px solid var(--blue);
+}
+.callout-good {
+    background: #f0fdf4;
+    border-left: 4px solid var(--green);
+}
+.callout strong { display: block; margin-bottom: 4px; }
+
+/* === HEALTH CARD === */
+.health-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 12px 0;
+}
+.health-item {
+    padding: 10px 14px;
+    border-radius: 6px;
+    background: var(--slate-50);
+    border: 1px solid var(--slate-200);
+}
+.health-item .metric {
+    font-size: 22pt;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+}
+.health-item .label {
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--slate-500);
+    margin-top: 2px;
+}
+
+/* === STAT ROW === */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+}
+.stat-box {
+    text-align: center;
+    padding: 10px;
+    background: var(--slate-50);
+    border-radius: 6px;
+    border: 1px solid var(--slate-200);
+}
+.stat-box .val {
+    font-size: 18pt;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+.stat-box .desc {
+    font-size: 6.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--slate-500);
+    margin-top: 2px;
+}
+
+/* === COLUMNS === */
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* === CHART-LIKE === */
+.hbar-row {
+    display: flex;
+    align-items: center;
+    margin: 3px 0;
+    font-size: 7.5pt;
+}
+.hbar-label {
+    width: 140px;
+    text-align: right;
+    padding-right: 8px;
+    font-weight: 500;
+    color: var(--slate-600);
+    white-space: nowrap;
+    overflow: hidden;
+}
+.hbar-track {
+    flex: 1;
+    height: 14px;
+    background: var(--slate-100);
+    border-radius: 3px;
+    overflow: hidden;
+}
+.hbar-fill {
+    height: 100%;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    padding-left: 6px;
+    font-size: 6.5pt;
+    font-weight: 600;
+    color: white;
+}
+.hbar-fill.red { background: linear-gradient(90deg, #dc2626, #ef4444); }
+.hbar-fill.orange { background: linear-gradient(90deg, #ea580c, #f97316); }
+.hbar-fill.teal { background: linear-gradient(90deg, #0f766e, #14b8a6); }
+.hbar-fill.cyan { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+.hbar-fill.purple { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+.hbar-fill.blue { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+.hbar-fill.amber { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.hbar-fill.green { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.hbar-fill.slate { background: linear-gradient(90deg, #64748b, #94a3b8); }
+
+.page-break { page-break-before: always; }
+.no-orphan { page-break-inside: avoid; }
+
+/* Tighten for print */
+@media print {
+    body { font-size: 8.5pt; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER ==================== -->
+<div class="cover">
+    <div class="cover-icon">&#x1F99E;</div>
+    <h1>Deep Analysis Report</h1>
+    <h2>Health &middot; Governance &middot; Power Structure</h2>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+        <strong>Repository:</strong> openclaw/openclaw<br>
+        <strong>Stars:</strong> 353,000+ &nbsp;&middot;&nbsp; <strong>Language:</strong> TypeScript &nbsp;&middot;&nbsp; <strong>Category:</strong> Personal AI Assistant<br>
+        <strong>Data Sources:</strong> 800 commits &middot; 500 PRs &middot; 500 issues &middot; 50 releases<br>
+        <strong>Analysis Date:</strong> April 9, 2026
+    </div>
+    <div class="cover-badge">Powered by vajra &mdash; deterministic semantic reduction</div>
+</div>
+
+<!-- ==================== EXECUTIVE SUMMARY ==================== -->
+<div class="page-break"></div>
+<h1>Executive Summary</h1>
+
+<div class="stat-grid">
+    <div class="stat-box">
+        <div class="val grade-c">C-</div>
+        <div class="desc">Overall Health</div>
+    </div>
+    <div class="stat-box">
+        <div class="val grade-c">3.23</div>
+        <div class="desc">Commit Entropy (bits)</div>
+    </div>
+    <div class="stat-box">
+        <div class="val grade-f">3.1x</div>
+        <div class="desc">Merge Speed Gap</div>
+    </div>
+    <div class="stat-box">
+        <div class="val grade-f">36.2%</div>
+        <div class="desc">Fix Rate in Commits</div>
+    </div>
+</div>
+
+<p>OpenClaw is the <strong>most-starred project we have analyzed</strong> &mdash; 353K stars, dwarfing React (244K) and every other project in our portfolio. It is a personal AI assistant written in TypeScript, operating in the hottest category in open source. But behind the astronomical star count lies a governance structure that is both <strong>more distributed than expected</strong> and <strong>more fragile than its stardom suggests</strong>. One person &mdash; <strong>Peter Steinberger (steipete)</strong> &mdash; writes <strong>51.4% of all human commits</strong>, with a tight inner circle of 5 developers producing 78% of all code. The project receives an extraordinary volume of community contributions (275 unique PR authors in just 3 days of data), but only <strong>12.8% of PRs get merged</strong>.</p>
+
+<div class="callout callout-critical">
+    <strong>Key Finding: The 353K-Star Bottleneck</strong>
+    OpenClaw receives more community contributions than any project we have analyzed: 500 PRs from 275 authors in a 3-day window. But the merge rate is just 12.8% &mdash; worse than React (14.5%). The project has a "maintainer" label system that gates trusted contributors (62% merge rate), while unlabeled PRs face near-zero acceptance. With 71K forks generating a flood of PRs, the core team actively uses a "r: too-many-prs" rejection label. The community wants to contribute; the bottleneck is review capacity.
+</div>
+
+<h2>Health Scorecard</h2>
+<table>
+<thead><tr><th>Dimension</th><th>Grade</th><th>Key Metric</th><th>vajra Signal</th></tr></thead>
+<tbody>
+<tr><td>Bus Factor</td><td class="grade-c"><strong>C</strong></td><td>6 engineers for 80% coverage</td><td>Commit entropy 3.23 bits, BF80 = 6</td></tr>
+<tr><td>Governance Model</td><td class="grade-c"><strong>C</strong></td><td>Benevolent oligarchy, tight core</td><td>Top-1 share = 51.4%, Gini = 0.837</td></tr>
+<tr><td>Merge Equity</td><td class="grade-f"><strong>D</strong></td><td>Core 80% vs community 12.1%</td><td>Merge rate gap = 67.9 pts</td></tr>
+<tr><td>Community Reception</td><td class="grade-f"><strong>D-</strong></td><td>12.8% overall merge rate</td><td>Median wait 3.0h community vs 2.0h core</td></tr>
+<tr><td>Issue Response</td><td class="grade-f"><strong>F</strong></td><td>56.8% zero-comment issues</td><td>0% core maintainer response in sample</td></tr>
+<tr><td>Code Stability</td><td class="grade-f"><strong>F</strong></td><td>36.2% fix ratio</td><td>290/800 commits are fixes &mdash; highest measured</td></tr>
+<tr><td>Release Cadence</td><td class="grade-a"><strong>A</strong></td><td>50 releases in ~10 weeks</td><td>Date-based versioning, near-daily releases</td></tr>
+<tr><td>Contributor Retention</td><td class="grade-f"><strong>D</strong></td><td>59.5% one-commit contributors</td><td>44/74 human authors contributed once</td></tr>
+<tr><td>Velocity Trend</td><td class="grade-a"><strong>A+</strong></td><td>800 commits in 4 days</td><td>~200 commits/day, extreme velocity</td></tr>
+<tr><td>Bot Dependency</td><td class="grade-a"><strong>A</strong></td><td>3.0% bot commits</td><td>24/800 &mdash; minimal automation overhead</td></tr>
+</tbody>
+</table>
+
+<!-- ==================== POWER STRUCTURE ==================== -->
+<div class="page-break"></div>
+<h1>The Power Structure</h1>
+
+<h2>Commit Authorship (800 commits, 776 human)</h2>
+
+<table>
+<thead><tr><th>Author</th><th>Commits</th><th>Share</th><th>Distribution</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td><strong>Peter Steinberger</strong> (steipete)</td><td class="num">399</td><td class="num"><strong>51.4%</strong></td><td><div class="bar" style="width:51%;"></div></td><td><span class="tag tag-core">Lead / Creator</span></td></tr>
+<tr><td><strong>Vincent Koc</strong> (vincentkoc)</td><td class="num">107</td><td class="num">13.8%</td><td><div class="bar" style="width:14%; background: linear-gradient(90deg, #ea580c, #f97316);"></div></td><td><span class="tag tag-core">Core Team</span></td></tr>
+<tr><td><strong>joshavant</strong></td><td class="num">50</td><td class="num">6.4%</td><td><div class="bar" style="width:6.4%; background: linear-gradient(90deg, #f59e0b, #fbbf24);"></div></td><td><span class="tag tag-core">Core Team</span></td></tr>
+<tr><td><strong>Gustavo Madeira Santana</strong></td><td class="num">29</td><td class="num">3.7%</td><td><div class="bar" style="width:3.7%; background: linear-gradient(90deg, #3b82f6, #60a5fa);"></div></td><td><span class="tag tag-maintainer">Maintainer</span></td></tr>
+<tr><td><strong>github-actions[bot]</strong></td><td class="num">24</td><td class="num">3.0%</td><td><div class="bar" style="width:3%; background: linear-gradient(90deg, #64748b, #94a3b8);"></div></td><td><span class="tag tag-bot">Bot</span></td></tr>
+<tr><td><strong>Ayaan Zaidi</strong></td><td class="num">20</td><td class="num">2.6%</td><td><div class="bar" style="width:2.6%; background: linear-gradient(90deg, #22c55e, #4ade80);"></div></td><td><span class="tag tag-maintainer">Maintainer</span></td></tr>
+<tr><td><strong>Shakker</strong></td><td class="num">18</td><td class="num">2.3%</td><td><div class="bar" style="width:2.3%; background: linear-gradient(90deg, #22c55e, #4ade80);"></div></td><td><span class="tag tag-maintainer">Maintainer</span></td></tr>
+<tr><td><strong>Mariano</strong> (mbelinky)</td><td class="num">14</td><td class="num">1.8%</td><td><div class="bar" style="width:1.8%; background: linear-gradient(90deg, #22c55e, #4ade80);"></div></td><td><span class="tag tag-maintainer">Maintainer</span></td></tr>
+<tr><td><strong>Agustin Rivera</strong></td><td class="num">12</td><td class="num">1.5%</td><td><div class="bar" style="width:1.5%; background: linear-gradient(90deg, #22c55e, #4ade80);"></div></td><td><span class="tag tag-maintainer">Maintainer</span></td></tr>
+<tr><td><strong>sudie-codes</strong></td><td class="num">8</td><td class="num">1.0%</td><td><div class="bar" style="width:1%; background: linear-gradient(90deg, #22c55e, #4ade80);"></div></td><td><span class="tag tag-community">Community</span></td></tr>
+<tr><td class="dim">Other 64 contributors</td><td class="num">119</td><td class="num">15.3%</td><td><div class="bar" style="width:15%; background: linear-gradient(90deg, #22c55e, #4ade80);"></div></td><td><span class="tag tag-community">Community</span></td></tr>
+</tbody>
+</table>
+
+<div class="stat-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+    <div class="stat-box"><div class="val" style="color: #dc2626;">51.4%</div><div class="desc">steipete (Lead)</div></div>
+    <div class="stat-box"><div class="val" style="color: #ea580c;">26.6%</div><div class="desc">Core Inner Ring (2-5)</div></div>
+    <div class="stat-box"><div class="val" style="color: #22c55e;">22.0%</div><div class="desc">Extended Team + Community</div></div>
+</div>
+
+<h2>The Oligarchy Pattern</h2>
+<p>Unlike Fabric (one-person show) or Effect-TS (BDFL + small team), OpenClaw operates as a <strong>benevolent oligarchy</strong>: a tight inner circle of 5 developers led by creator Peter Steinberger, producing 78% of all code, surrounded by a broader ring of 8-10 regular maintainers who contribute 1-3% each. This is a healthier pattern than a single-person dependency, but the <strong>8:1 ratio</strong> between steipete's commits (399) and the third-place contributor (50) reveals that the oligarchy has a clear first-among-equals.</p>
+
+<div class="callout callout-warning">
+    <strong>The Creator is Still Building: steipete = 51.4%</strong>
+    Unlike Fabric where the creator (danielmiessler) vanished from commit history, OpenClaw's creator Peter Steinberger remains the dominant force. He wrote 399 of the last 800 commits &mdash; more than the next 4 contributors combined (204). This is both a strength (aligned leadership) and a risk (bus factor still depends heavily on one person). If steipete steps back, Vincent Koc at 13.8% would need to 4x his output to fill the gap.
+</div>
+
+<!-- ==================== GOVERNANCE TIMELINE ==================== -->
+<h1 style="page-break-before: always;">Governance &amp; Entropy Dashboard</h1>
+
+<h2>The Entropy Dashboard</h2>
+<p>Shannon entropy measures contributor diversity. Higher values indicate more distributed contributions. OpenClaw's entropy profile reveals an interesting divergence between who files issues and who writes code.</p>
+
+<table>
+<thead><tr><th>Data Source</th><th>Author Entropy (bits)</th><th>Unique Authors</th><th>Interpretation</th></tr></thead>
+<tbody>
+<tr><td>Issues (500)</td><td class="grade-a"><strong>8.59</strong></td><td>425</td><td>Exceptional &mdash; broadest community engagement measured</td></tr>
+<tr><td>Pull Requests (500)</td><td class="grade-a"><strong>7.53</strong></td><td>275</td><td>Very strong &mdash; massive contributor diversity</td></tr>
+<tr><td>Commits (800)</td><td class="grade-c"><strong>3.23</strong></td><td>75</td><td>Moderate &mdash; oligarchic concentration</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-critical">
+    <strong>The 5.36-bit entropy gap: 353K stars create a massive contribution funnel</strong>
+    The gap between issue entropy (8.59) and commit entropy (3.23) is 5.36 bits &mdash; comparable to Fabric's 5.88-bit gap. 425 unique people file issues, 275 submit PRs, but only 75 get commits merged. The funnel narrows by 5.7x from issue to commit. For a project with 71K forks, this suggests an enormous pool of potential contributors that the core team cannot absorb. The PR-to-issue gap is remarkably small (1.05 bits), meaning the community actively attempts to contribute code, not just report bugs.
+</div>
+
+<h2>Governance Metrics (vajra output)</h2>
+<table>
+<thead><tr><th>Metric</th><th>Value</th><th>Interpretation</th></tr></thead>
+<tbody>
+<tr><td>Bus Factor (80%)</td><td class="num grade-c"><strong>6</strong></td><td>Need to lose 6 people for 80% commit loss</td></tr>
+<tr><td>Bus Factor (50%)</td><td class="num grade-f"><strong>2</strong></td><td>steipete alone = 51.4%</td></tr>
+<tr><td>Author Entropy</td><td class="num grade-c"><strong>3.23 bits</strong></td><td>Below 4.0-bit health threshold, but improving</td></tr>
+<tr><td>Gini Coefficient</td><td class="num grade-f"><strong>0.837</strong></td><td>Severe inequality (closer to Fabric than React)</td></tr>
+<tr><td>Top-1 Share</td><td class="num grade-f"><strong>49.9%</strong></td><td>Just under half (including bots)</td></tr>
+<tr><td>Top-3 Share</td><td class="num grade-f"><strong>69.5%</strong></td><td>Three people = 70% of all commits</td></tr>
+<tr><td>Top-5 Share</td><td class="num grade-f"><strong>76.1%</strong></td><td>Five people = three-quarters of output</td></tr>
+<tr><td>One-Commit Rate</td><td class="num grade-f"><strong>58.7%</strong></td><td>44 of 75 authors made exactly one commit</td></tr>
+<tr><td>Unique Authors</td><td class="num"><strong>75</strong></td><td>Largest contributor pool in portfolio</td></tr>
+</tbody>
+</table>
+
+<h2>Velocity: 800 Commits in 4 Days</h2>
+<p>The 800-commit sample covers just April 7-10, 2026 &mdash; meaning OpenClaw sustains approximately <strong>200 commits per day</strong>. This is the highest raw velocity we have measured, outpacing React and rivaling the largest corporate open-source projects. The velocity is distributed across 74 human authors, though steipete accounts for roughly half.</p>
+
+<div class="hbar-row"><div class="hbar-label">Apr 1</div><div class="hbar-track"><div class="hbar-fill slate" style="width:0.3%">1</div></div></div>
+<div class="hbar-row"><div class="hbar-label">Apr 6</div><div class="hbar-track"><div class="hbar-fill slate" style="width:0.8%">3</div></div></div>
+<div class="hbar-row"><div class="hbar-label">Apr 7</div><div class="hbar-track"><div class="hbar-fill red" style="width:34%">129</div></div></div>
+<div class="hbar-row"><div class="hbar-label">Apr 8</div><div class="hbar-track"><div class="hbar-fill red" style="width:100%">377</div></div></div>
+<div class="hbar-row"><div class="hbar-label">Apr 9</div><div class="hbar-track"><div class="hbar-fill red" style="width:61%">229</div></div></div>
+<div class="hbar-row"><div class="hbar-label">Apr 10</div><div class="hbar-track"><div class="hbar-fill orange" style="width:16%">61</div></div></div>
+
+<div class="callout callout-info">
+    <strong>The velocity surge pattern: Apr 8 = 377 commits</strong>
+    The Apr 7-8 spike likely corresponds to a feature release or merge sprint. Single-day commit counts of 377 are extraordinary for any open-source project. This velocity is only sustainable with a distributed team, which confirms that OpenClaw, despite its oligarchic commit concentration, has sufficient engineering capacity for burst periods. The question is whether this pace is sustained or episodic.
+</div>
+
+<!-- ==================== TWO-CLASS MERGE SYSTEM ==================== -->
+<h1 style="page-break-before: always;">The Two-Class Merge System</h1>
+
+<div class="two-col">
+<div>
+<h3>Merge Rates</h3>
+<div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="stat-box"><div class="val grade-a">80.0%</div><div class="desc">Core Merge Rate</div></div>
+    <div class="stat-box"><div class="val grade-f">12.1%</div><div class="desc">Community Merge Rate</div></div>
+</div>
+</div>
+<div>
+<h3>Time to Merge (median)</h3>
+<div class="stat-grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="stat-box"><div class="val grade-a">2.0 hrs</div><div class="desc">Core Team</div></div>
+    <div class="stat-box"><div class="val grade-c">3.0 hrs</div><div class="desc">Community</div></div>
+</div>
+</div>
+</div>
+
+<p>OpenClaw's merge system reveals a <strong>stark two-tier structure</strong>. The core team's 80% merge rate reflects self-merge privileges for trusted contributors. The community's 12.1% merge rate is among the lowest we have measured &mdash; comparable to React's 14.5% but for a very different reason. React rejects contributions because a corporate team does the work internally. OpenClaw rejects because the <strong>volume of incoming PRs exceeds review capacity</strong>.</p>
+
+<h2>The "Maintainer" Label: OpenClaw's Trust Gate</h2>
+<p>OpenClaw uses a formal label-based trust system. PRs labeled "maintainer" (assigned by core team members) merge at <strong>62%</strong>. PRs without this label face near-zero acceptance. This is a deliberate quality gate, not neglect.</p>
+
+<table>
+<thead><tr><th>PR Category</th><th>Total</th><th>Merged</th><th>Merge Rate</th><th>Signal</th></tr></thead>
+<tbody>
+<tr><td><span class="tag tag-maintainer">maintainer</span> labeled</td><td class="num">78</td><td class="num">48</td><td class="num grade-b"><strong>62%</strong></td><td class="grade-a">Trusted path</td></tr>
+<tr><td><span class="tag tag-community">agents</span> component</td><td class="num">117</td><td class="num">13</td><td class="num grade-f">11%</td><td class="grade-c">Hot area, high competition</td></tr>
+<tr><td><span class="tag tag-community">gateway</span> component</td><td class="num">83</td><td class="num">10</td><td class="num grade-f">12%</td><td class="grade-c">Core infra, strict review</td></tr>
+<tr><td><span class="tag tag-community">docs</span></td><td class="num">55</td><td class="num">10</td><td class="num grade-c">18%</td><td class="grade-b">Slightly more open</td></tr>
+<tr><td><span class="tag tag-community">extensions: memory-core</span></td><td class="num">33</td><td class="num">10</td><td class="num grade-c">30%</td><td class="grade-b">Extension ecosystem more open</td></tr>
+<tr><td><span class="tag tag-community">app: web-ui</span></td><td class="num">35</td><td class="num">9</td><td class="num grade-c">26%</td><td class="grade-b">UI contributions accepted</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-warning">
+    <strong>The "r: too-many-prs" rejection label: a scaling failure signal</strong>
+    OpenClaw has a dedicated label "r: too-many-prs" applied to 33 PRs from 6 authors in our 3-day sample. These PRs are auto-closed regardless of quality. Contributors flagged include zozo123 (24 PRs, 0 merged), EronFan (15 PRs, 0 merged), and jepson-liu (10 PRs, 0 merged). This is a project where 71K forks generate more contribution attempts than the core team can process &mdash; a luxury problem, but a governance failure if not addressed with clear contributor documentation.
+</div>
+
+<h2>Top Community Contributors (by PRs)</h2>
+<table>
+<thead><tr><th>Contributor</th><th>PRs</th><th>Merged</th><th>Merge Rate</th><th>Signal</th></tr></thead>
+<tbody>
+<tr><td>zozo123</td><td class="num">24</td><td class="num">0</td><td class="num grade-f">0%</td><td>Flagged: too-many-prs</td></tr>
+<tr><td><strong>mbelinky</strong></td><td class="num">17</td><td class="num">13</td><td class="num grade-a">76%</td><td class="grade-a">Trusted maintainer</td></tr>
+<tr><td>EronFan</td><td class="num">15</td><td class="num">0</td><td class="num grade-f">0%</td><td>Flagged: too-many-prs</td></tr>
+<tr><td>sudie-codes</td><td class="num">11</td><td class="num">4</td><td class="num grade-c">36%</td><td>Partial acceptance</td></tr>
+<tr><td>jepson-liu</td><td class="num">10</td><td class="num">0</td><td class="num grade-f">0%</td><td>Flagged: too-many-prs</td></tr>
+<tr><td>neeravmakwana</td><td class="num">9</td><td class="num">3</td><td class="num grade-c">33%</td><td>Active contributor</td></tr>
+<tr><td>franciscomaestre</td><td class="num">8</td><td class="num">0</td><td class="num grade-f">0%</td><td>No merges</td></tr>
+<tr><td>hxy91819</td><td class="num">7</td><td class="num">4</td><td class="num grade-b">57%</td><td class="grade-b">Maintainer path</td></tr>
+<tr><td>eleqtrizit</td><td class="num">7</td><td class="num">1</td><td class="num grade-f">14%</td><td>Low acceptance</td></tr>
+<tr><td>jalehman</td><td class="num">5</td><td class="num">3</td><td class="num grade-b">60%</td><td class="grade-b">Maintainer path</td></tr>
+</tbody>
+</table>
+
+<p>The data reveals a clear <strong>bimodal distribution</strong>: contributors either earn "maintainer" trust (60-76% merge rate) or face near-total rejection (0-14%). There is no middle ground. mbelinky (76% merge rate, 17 PRs, 13 merged) represents the ideal community-to-maintainer graduation path. zozo123 (0% across 24 PRs) represents the opposite &mdash; volume without trust.</p>
+
+<!-- ==================== CONTRIBUTOR LIFECYCLE ==================== -->
+<h1 style="page-break-before: always;">Contributor Lifecycle</h1>
+
+<h2>Contributor Pyramid</h2>
+<div class="stat-grid">
+    <div class="stat-box"><div class="val grade-f">59.5%</div><div class="desc">One-Commit Contributors</div></div>
+    <div class="stat-box"><div class="val">74</div><div class="desc">Human Authors (800 commits)</div></div>
+    <div class="stat-box"><div class="val grade-b">6</div><div class="desc">10+ Commit Authors</div></div>
+    <div class="stat-box"><div class="val grade-c">3</div><div class="desc">50+ Commit Authors</div></div>
+</div>
+
+<p>OpenClaw's contributor pyramid is wider at the base than any project in our portfolio: 74 human authors in a 4-day window is remarkable. But the pyramid narrows sharply: only 6 authors have 10+ commits, and only 3 have 50+. The ratio between #1 (399 commits) and #4 (29 commits) is <strong>14:1</strong> &mdash; steep but far less extreme than Fabric's 56:1 ratio.</p>
+
+<h2>The Inner Circle vs Extended Team</h2>
+<table>
+<thead><tr><th>Role</th><th>Members</th><th>Commits</th><th>Share (human)</th><th>Function</th></tr></thead>
+<tbody>
+<tr><td><span class="tag tag-core">Creator / Lead</span></td><td><strong>Peter Steinberger</strong></td><td class="num">399</td><td class="num">51.4%</td><td>Architecture, core features, reviews</td></tr>
+<tr><td><span class="tag tag-core">Core Ring</span></td><td>Vincent Koc, joshavant</td><td class="num">157</td><td class="num">20.2%</td><td>Major features, infrastructure</td></tr>
+<tr><td><span class="tag tag-maintainer">Maintainer Ring</span></td><td>Gustavo, Ayaan, Shakker, Mariano, Agustin</td><td class="num">93</td><td class="num">12.0%</td><td>Features, bug fixes, components</td></tr>
+<tr><td><span class="tag tag-bot">Bots</span></td><td>github-actions[bot]</td><td class="num">24</td><td class="num dim">3.0% (of total)</td><td>CI/CD, releases</td></tr>
+<tr><td><span class="tag tag-community">Community</span></td><td>~64 other human authors</td><td class="num">127</td><td class="num">16.4%</td><td>Patches, features, i18n</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info">
+    <strong>The Concentric Rings Model</strong>
+    OpenClaw operates with three clear concentric rings: (1) steipete at the center with absolute authority, (2) a core ring of 2 trusted engineers who together with steipete produce 72% of code, and (3) a maintainer ring of ~5 trusted contributors handling component-specific work. Unlike React's corporate model or Fabric's one-person show, this is an organic open-source governance pattern where trust is earned through sustained contribution. The "maintainer" label on PRs formalizes this hierarchy.
+</div>
+
+<h2>Contributor Churn Signal</h2>
+<p>vajra measured a one-commit rate of <strong>59.5%</strong> &mdash; 44 of 74 human authors made exactly one commit in the sample. This is consistent with a high-traffic project that attracts many drive-by contributors. The churn rate alone is not alarming for a 353K-star project; the question is whether the maintainer ring is stable. With 6 authors having 10+ commits in 4 days, the active maintainer pool appears healthy.</p>
+
+<div class="callout callout-good">
+    <strong>Healthy depth: 6 authors with 10+ commits in 4 days</strong>
+    Unlike Fabric (1 person with 10+ commits) or Effect-TS (2-3), OpenClaw has 6 authors sustaining double-digit commit velocity. This gives the project meaningful resilience. If steipete were to step back, Vincent Koc (107) and joshavant (50) could potentially absorb the load &mdash; though it would require a 3x increase in their output.
+</div>
+
+<!-- ==================== ISSUE HEALTH ==================== -->
+<h1 style="page-break-before: always;">Issue Health &amp; Community Voice</h1>
+
+<h2>Overview</h2>
+<div class="stat-grid">
+    <div class="stat-box"><div class="val grade-f">11.8%</div><div class="desc">Close Rate</div></div>
+    <div class="stat-box"><div class="val grade-f">56.8%</div><div class="desc">Zero-Comment Issues</div></div>
+    <div class="stat-box"><div class="val grade-f">100%</div><div class="desc">No Core Response (sample)</div></div>
+    <div class="stat-box"><div class="val grade-f">0.7</div><div class="desc">Avg Comments per Issue</div></div>
+</div>
+
+<p>Issue health is OpenClaw's weakest dimension. The 500-issue sample (spanning Apr 8-10) shows a project <strong>drowning in user reports</strong>: 441 issues still open, 284 with zero comments, and no responses from the core team (steipete, vincentkoc, joshavant) in any sampled issue thread. This is the cost of 353K stars: the user base generates issues faster than any team can triage.</p>
+
+<h2>Issue Categories</h2>
+<table>
+<thead><tr><th>Category</th><th>Count</th><th>Share</th><th>Close Rate</th><th>Signal</th></tr></thead>
+<tbody>
+<tr><td><strong>Bugs</strong></td><td class="num">117</td><td class="num">23.4%</td><td class="grade-c">varies</td><td class="grade-c">High bug volume reflects rapid iteration</td></tr>
+<tr><td><strong>Regressions</strong></td><td class="num">49</td><td class="num">9.8%</td><td class="grade-f">low</td><td class="grade-f">Nearly 1 in 10 issues is a regression</td></tr>
+<tr><td><strong>Enhancements</strong></td><td class="num">34</td><td class="num">6.8%</td><td class="grade-c">varies</td><td class="grade-a">Healthy feature demand signal</td></tr>
+<tr><td><strong>Unlabeled</strong></td><td class="num">300</td><td class="num">60.0%</td><td class="grade-f">low</td><td class="grade-f">Majority untriaged</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-critical">
+    <strong>9.8% regression rate: speed vs stability tradeoff</strong>
+    49 of 500 issues are labeled "regression" &mdash; meaning features that previously worked are now broken. Combined with the 36.2% fix rate in commits, this paints a picture of a project moving extremely fast but leaving stability debris. The near-daily release cadence (50 releases in 10 weeks) means regressions reach users quickly. This is the classic velocity-stability tradeoff: React ships slowly but stably; OpenClaw ships fast and patches forward.
+</div>
+
+<h2>Top Issue Commenters</h2>
+<table>
+<thead><tr><th>Commenter</th><th>Comments</th><th>Role</th><th>Also a Code Contributor?</th></tr></thead>
+<tbody>
+<tr><td><strong>Artyomkun</strong></td><td class="num">62</td><td><span class="tag tag-community">Community</span></td><td>No commits</td></tr>
+<tr><td><strong>Jah-yee</strong></td><td class="num">46</td><td><span class="tag tag-community">Community</span></td><td>No commits</td></tr>
+<tr><td><strong>mjamiv</strong></td><td class="num">19</td><td><span class="tag tag-community">Community</span></td><td>No commits</td></tr>
+<tr><td><strong>Sotired001</strong></td><td class="num">10</td><td><span class="tag tag-community">Community</span></td><td>No commits</td></tr>
+<tr><td><strong>neeravmakwana</strong></td><td class="num">9</td><td><span class="tag tag-community">Community</span></td><td>3 commits</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-warning">
+    <strong>Issue support is entirely community-driven.</strong>
+    The top 5 issue commenters are all community members, not core team. Artyomkun (62 comments) and Jah-yee (46 comments) are providing peer support with no commit authority. Unlike Fabric where ksylvan (843 comments) handles all support, OpenClaw's core team appears to rely on community members and addresses issues through code (fixes) rather than conversation. This is sustainable at scale but creates poor user experience for issue reporters.
+</div>
+
+<!-- ==================== RELEASE HEALTH ==================== -->
+<h1 style="page-break-before: always;">Release Cadence &amp; Stability</h1>
+
+<h2>Release Timeline</h2>
+<table>
+<thead><tr><th>Version</th><th>Date</th><th>Gap (days)</th><th>Significance</th></tr></thead>
+<tbody>
+<tr><td class="mono"><strong>v2026.4.9</strong></td><td>Apr 9, 2026</td><td>0</td><td class="grade-a">Latest stable release</td></tr>
+<tr><td class="mono">v2026.4.9-beta.1</td><td>Apr 9, 2026</td><td>0</td><td>Beta preceding stable</td></tr>
+<tr><td class="mono">v2026.4.8</td><td>Apr 8, 2026</td><td>0</td><td>Daily release</td></tr>
+<tr><td class="mono">v2026.4.7</td><td>Apr 8, 2026</td><td>1</td><td>Daily release</td></tr>
+<tr><td class="mono">v2026.4.5</td><td>Apr 6, 2026</td><td>4</td><td>Weekend gap</td></tr>
+<tr><td class="mono">v2026.4.2</td><td>Apr 2, 2026</td><td>1</td><td>Daily release</td></tr>
+<tr><td class="mono">v2026.4.1</td><td>Apr 1, 2026</td><td>1</td><td>Month start</td></tr>
+<tr><td class="mono">v2026.3.31</td><td>Mar 31, 2026</td><td>1</td><td>Month-end close</td></tr>
+<tr><td class="mono dim">...</td><td colspan="3" class="dim">~50 releases across Feb-Apr 2026</td></tr>
+<tr><td class="mono">v2026.2.2</td><td>Feb 4, 2026</td><td>&mdash;</td><td>Oldest in sample</td></tr>
+</tbody>
+</table>
+
+<div class="stat-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+    <div class="stat-box"><div class="val" style="color: #ef4444;">50</div><div class="desc">Releases (10-week sample)</div></div>
+    <div class="stat-box"><div class="val" style="color: #f97316;">~1/day</div><div class="desc">Release Frequency</div></div>
+    <div class="stat-box"><div class="val" style="color: #8b5cf6;">16</div><div class="desc">Beta/RC Releases</div></div>
+</div>
+
+<div class="callout callout-info">
+    <strong>Date-based versioning: calver (YYYY.M.D) with beta channels</strong>
+    OpenClaw uses calendar versioning (v2026.4.9) rather than semver, releasing approximately daily with beta prereleases. This is a modern CI/CD pattern: every day's work becomes a release. 16 of 50 releases are betas, indicating a staged rollout process. The mean gap between releases is just 1.0 day, with a median of 0 days (multiple releases on the same day).
+</div>
+
+<h2>Code Stability: Fix Rate Analysis</h2>
+<div class="stat-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+    <div class="stat-box"><div class="val grade-f">36.2%</div><div class="desc">Fix Rate (290/800)</div></div>
+    <div class="stat-box"><div class="val grade-b">63.8%</div><div class="desc">Feature / Other Work</div></div>
+    <div class="stat-box"><div class="val grade-c">0.94</div><div class="desc">Intent Entropy (bits)</div></div>
+</div>
+
+<p>The 36.2% fix rate is the <strong>highest we have measured in any project</strong> &mdash; nearly double Fabric's 18.4% and 60% higher than React's 22.8%. One in three commits is fixing something that was previously broken. Combined with the 9.8% regression issue rate, this signals a project in a <strong>high-velocity, high-churn development phase</strong> where features ship fast but require significant post-deployment repair work.</p>
+
+<div class="callout callout-critical">
+    <strong>36.2% fix rate: the highest in our portfolio</strong>
+    For every 2 feature commits, there is 1 fix commit. This ratio is sustainable for a young, fast-moving project but would be alarming in a mature codebase. OpenClaw is clearly in a "ship and iterate" phase, prioritizing velocity over stability. This is consistent with the AI assistant space where being first-to-market matters more than polish. But as the user base scales toward its 353K-star potential, the stability burden will compound.
+</div>
+
+<h2>Bot Analysis</h2>
+<table>
+<thead><tr><th>Bot</th><th>Commits</th><th>Share</th><th>Function</th></tr></thead>
+<tbody>
+<tr><td>github-actions[bot]</td><td class="num">24</td><td class="num">3.0%</td><td>CI/CD, automated releases</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-good">
+    <strong>Minimal bot overhead: 3.0% automation traffic</strong>
+    Unlike Fabric (24.9% bot commits) or many enterprise projects, OpenClaw has remarkably low bot traffic. The 24 github-actions commits are purely release automation. This means the 776 human commits in the sample represent genuine development work, making the velocity numbers more impressive. The team is writing code, not managing bots.
+</div>
+
+<!-- ==================== STRUCTURAL ANALYSIS ==================== -->
+<h1 style="page-break-before: always;">Structural Analysis: Invariants &amp; Signals</h1>
+
+<h2>Invariant Analysis: Hidden Rules</h2>
+<p>vajra's invariant detection reveals the strongest field-to-field relationships in the commit data, exposing the hidden rules of how OpenClaw development works.</p>
+
+<table>
+<thead><tr><th>Invariant</th><th>Strength</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td>author &rarr; email</td><td class="num grade-a"><strong>0.994</strong></td><td>Near-perfect identity consistency</td></tr>
+<tr><td>author &rarr; subject</td><td class="num grade-c"><strong>0.336</strong></td><td>Authors have moderate topic specialization</td></tr>
+<tr><td>author &rarr; date</td><td class="num grade-c"><strong>0.335</strong></td><td>Authors work different time slots</td></tr>
+<tr><td>author &rarr; intent</td><td class="num grade-c"><strong>0.333</strong></td><td>Weak intent specialization (everyone does fixes + features)</td></tr>
+<tr><td>email &rarr; subject</td><td class="num grade-c"><strong>0.333</strong></td><td>Similar to author &rarr; subject</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info">
+    <strong>Moderate specialization (0.336) &mdash; healthier than Fabric (0.215)</strong>
+    The author &rarr; subject invariant of 0.336 means authors have some topic specialization. This is consistent with the component-based label system (agents, gateway, web-ui, memory-core). Different maintainers focus on different components, which is a healthy division of labor. In comparison, Fabric's 0.215 meant one person doing everything, and React's 0.966 meant extreme specialization. OpenClaw sits in a healthy middle ground.
+</div>
+
+<h2>PR Label Taxonomy: A Mature Organization</h2>
+<p>OpenClaw's PR label system reveals a sophisticated project management approach:</p>
+
+<table>
+<thead><tr><th>Label Category</th><th>Count</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><strong>size: XS/S/M/L/XL</strong></td><td class="num">500</td><td>PR size classification for review triage</td></tr>
+<tr><td><strong>agents</strong></td><td class="num">117</td><td>Agent runtime and tooling component</td></tr>
+<tr><td><strong>gateway</strong></td><td class="num">83</td><td>Gateway infrastructure layer</td></tr>
+<tr><td><strong>maintainer</strong></td><td class="num">78</td><td>Trusted contributor designation</td></tr>
+<tr><td><strong>docs</strong></td><td class="num">55</td><td>Documentation changes</td></tr>
+<tr><td><strong>app: web-ui</strong></td><td class="num">35</td><td>Web interface component</td></tr>
+<tr><td><strong>r: too-many-prs</strong></td><td class="num">33</td><td>Volume-based rejection</td></tr>
+<tr><td><strong>extensions: memory-core</strong></td><td class="num">33</td><td>Memory extension system</td></tr>
+</tbody>
+</table>
+
+<p>The label system is the most mature we have seen in any analyzed project. Size-based triage, component routing, maintainer trust gates, and explicit rejection labels all indicate a team that has thought carefully about scaling open-source governance. This is the infrastructure of a project that expects high contribution volume and has built process to manage it.</p>
+
+<!-- ==================== COMPARISON ==================== -->
+<h1 style="page-break-before: always;">Five-Project Comparison: The Spectrum of OSS Governance</h1>
+
+<p>Placing OpenClaw alongside our other analyzed projects reveals where the most-starred project sits on the governance spectrum. Each project represents a fundamentally different model.</p>
+
+<table>
+<thead><tr><th>Metric</th><th>OpenClaw (Oligarchy)</th><th>React (Corporate)</th><th>Fabric (Delegate)</th><th>Effect-TS (BDFL)</th><th>uv (Startup)</th><th>Healthy Range</th></tr></thead>
+<tbody>
+<tr><td><strong>Stars</strong></td><td class="grade-a"><strong>353K</strong></td><td>244K</td><td>40.5K</td><td>9K</td><td>55K</td><td>&mdash;</td></tr>
+<tr><td><strong>Bus Factor (80%)</strong></td><td class="grade-c"><strong>6</strong></td><td class="grade-b">4-10</td><td class="grade-f">1</td><td class="grade-f">1-2</td><td class="grade-c">3</td><td>&gt;3</td></tr>
+<tr><td><strong>Top Author Share</strong></td><td class="grade-f"><strong>51.4%</strong></td><td class="grade-b">23.4%</td><td class="grade-f">84.9%</td><td class="grade-f">32.9%</td><td class="grade-c">40%</td><td>&lt;25%</td></tr>
+<tr><td><strong>Commit Entropy</strong></td><td class="grade-c"><strong>3.23 bits</strong></td><td class="grade-c">3.71 bits</td><td class="grade-f">2.07 bits</td><td class="grade-c">3.45 bits</td><td class="grade-c">3.2 bits</td><td>&gt;4.0 bits</td></tr>
+<tr><td><strong>Issue Entropy</strong></td><td class="grade-a"><strong>8.59 bits</strong></td><td class="grade-a">8.54 bits</td><td class="grade-a">7.95 bits</td><td class="grade-a">6.61 bits</td><td class="grade-a">7.5 bits</td><td>&gt;5.0 bits</td></tr>
+<tr><td><strong>Entropy Gap</strong></td><td class="grade-f"><strong>5.36 bits</strong></td><td class="grade-c">4.83 bits</td><td class="grade-f">5.88 bits</td><td class="grade-c">3.16 bits</td><td class="grade-c">4.3 bits</td><td>&lt;2.0 bits</td></tr>
+<tr><td><strong>Community Merge</strong></td><td class="grade-f"><strong>12.1%</strong></td><td class="grade-f">10.0%</td><td class="grade-b">62.9%</td><td class="grade-c">45.9%</td><td class="grade-c">35%</td><td>&gt;40%</td></tr>
+<tr><td><strong>Fix Rate</strong></td><td class="grade-f"><strong>36.2%</strong></td><td class="grade-c">22.8%</td><td class="grade-c">18.4%</td><td class="grade-c">20.2%</td><td class="grade-c">15%</td><td>&lt;15%</td></tr>
+<tr><td><strong>One-Commit Rate</strong></td><td class="grade-f"><strong>59.5%</strong></td><td class="grade-c">59.1%</td><td class="grade-c">44.7%</td><td class="grade-c">59.1%</td><td class="grade-c">55%</td><td>&lt;40%</td></tr>
+<tr><td><strong>Gini Coefficient</strong></td><td class="grade-f"><strong>0.837</strong></td><td>0.72</td><td class="grade-f">0.878</td><td>0.78</td><td>0.75</td><td>&lt;0.6</td></tr>
+<tr><td><strong>Bot Dependency</strong></td><td class="grade-a"><strong>3.0%</strong></td><td>5-10%</td><td class="grade-c">24.9%</td><td>~5%</td><td>~8%</td><td>&lt;15%</td></tr>
+<tr><td><strong>Unique Authors</strong></td><td class="grade-a"><strong>74</strong></td><td>~30</td><td>38</td><td>~25</td><td>~20</td><td>&gt;20</td></tr>
+<tr><td><strong>Governance Model</strong></td><td>Oligarchy</td><td>Corp. BDFL</td><td>Delegation</td><td>Ind. BDFL</td><td>Startup</td><td>&mdash;</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info">
+    <strong>OpenClaw: Highest Stars, Highest Velocity, Highest Fix Rate</strong>
+    OpenClaw leads our portfolio in three categories: star count (353K), raw velocity (200 commits/day), and unique authors (74). But it also leads in the least desirable metric: fix rate (36.2%), suggesting the velocity comes at a stability cost. Its governance model &mdash; a benevolent oligarchy with explicit trust gates &mdash; is arguably the most sophisticated we have analyzed, even if the outcome metrics (12.1% community merge) rival React's corporate gatekeeping. The critical difference: React rejects because it does not need outside code; OpenClaw rejects because it cannot review fast enough.
+</div>
+
+<div class="callout callout-warning">
+    <strong>The Scaling Paradox: More Stars = More Problems</strong>
+    353K stars and 71K forks generate a contribution volume that overwhelms any open-source governance model. OpenClaw's "r: too-many-prs" label is the canary in the coal mine &mdash; it is the first project in our portfolio where we see explicit volume-based rejection. React solved this by building a moat (corporate team, near-zero community merge). Fabric solved it by having one tireless maintainer. OpenClaw is still searching for its scaling model, and the "maintainer" trust gate is its best tool so far.
+</div>
+
+<!-- ==================== METHODOLOGY ==================== -->
+<h1 style="page-break-before: always;">Methodology</h1>
+
+<h2>Analysis Engine</h2>
+<p><strong>vajra</strong> &mdash; a deterministic semantic reduction engine for structured data. Every analysis in this report is reproducible: same input + same config = byte-identical output. No ML, no heuristics, no sentiment analysis. Pure information theory on structured data.</p>
+
+<h2>Algorithms Applied</h2>
+<table>
+<thead><tr><th>Algorithm</th><th>Purpose</th><th>Where Used</th></tr></thead>
+<tbody>
+<tr><td>Shannon Entropy</td><td>Value diversity / concentration</td><td>Author entropy across all data sources</td></tr>
+<tr><td>MAD (Median Absolute Deviation)</td><td>Robust outlier detection</td><td>Commit patterns, velocity spikes</td></tr>
+<tr><td>Conditional Entropy H(Y|X)</td><td>Cross-field dependency</td><td>Author &rarr; intent, author &rarr; subject</td></tr>
+<tr><td>Gini Coefficient</td><td>Inequality measurement</td><td>Commit distribution (0.837)</td></tr>
+<tr><td>Temporal Windowing</td><td>Trend detection</td><td>Daily commit velocity</td></tr>
+<tr><td>BLAKE3</td><td>Structural fingerprinting</td><td>Commit structure identity</td></tr>
+<tr><td>Contributor Churn</td><td>New/returning/churned tracking</td><td>One-commit contributor rate</td></tr>
+<tr><td>Bus Factor (Pareto)</td><td>Key-person risk</td><td>80% and 50% coverage thresholds</td></tr>
+</tbody>
+</table>
+
+<h2>Key Metrics Glossary</h2>
+<table>
+<thead><tr><th>Metric</th><th>OpenClaw</th><th>React</th><th>Fabric</th><th>Effect-TS</th><th>Healthy Range</th></tr></thead>
+<tbody>
+<tr><td>Commit Author Entropy</td><td class="grade-c"><strong>3.23 bits</strong></td><td class="grade-c">3.71 bits</td><td class="grade-f">2.07 bits</td><td class="grade-c">3.45 bits</td><td>&gt;4.0 bits</td></tr>
+<tr><td>Issue Author Entropy</td><td class="grade-a"><strong>8.59 bits</strong></td><td class="grade-a">8.54 bits</td><td class="grade-a">7.95 bits</td><td class="grade-a">6.61 bits</td><td>&gt;5.0 bits</td></tr>
+<tr><td>Entropy Gap</td><td class="grade-f"><strong>5.36 bits</strong></td><td class="grade-c">4.83 bits</td><td class="grade-f">5.88 bits</td><td class="grade-c">3.16 bits</td><td>&lt;2.0 bits</td></tr>
+<tr><td>Bus Factor (80%)</td><td class="grade-c"><strong>6</strong></td><td class="grade-b">4-10</td><td class="grade-f">1</td><td class="grade-f">1-2</td><td>&gt;3</td></tr>
+<tr><td>Gini Coefficient</td><td class="grade-f"><strong>0.837</strong></td><td>0.72</td><td class="grade-f">0.878</td><td>0.78</td><td>&lt;0.6</td></tr>
+<tr><td>Community Merge Rate</td><td class="grade-f"><strong>12.1%</strong></td><td class="grade-f">10.0%</td><td class="grade-b">62.9%</td><td class="grade-c">45.9%</td><td>&gt;40%</td></tr>
+<tr><td>Fix Rate</td><td class="grade-f"><strong>36.2%</strong></td><td class="grade-c">22.8%</td><td class="grade-c">18.4%</td><td class="grade-c">20.2%</td><td>&lt;15%</td></tr>
+<tr><td>One-Commit Contributors</td><td class="grade-f"><strong>59.5%</strong></td><td class="grade-c">59.1%</td><td class="grade-c">44.7%</td><td class="grade-c">59.1%</td><td>&lt;40%</td></tr>
+</tbody>
+</table>
+
+<h2>Data Sources</h2>
+<table>
+<thead><tr><th>Source</th><th>Records</th><th>Window</th><th>Method</th></tr></thead>
+<tbody>
+<tr><td>Git commits</td><td>800</td><td>Apr 7-10, 2026</td><td><code>git log</code> &rarr; JSON &rarr; vajra stats/invariants/governance/score</td></tr>
+<tr><td>Pull requests</td><td>500</td><td>Apr 8-10, 2026</td><td>GitHub GraphQL API &rarr; vajra stats</td></tr>
+<tr><td>Issues</td><td>500</td><td>Apr 8-10, 2026</td><td>GitHub GraphQL API &rarr; vajra stats</td></tr>
+<tr><td>Releases</td><td>50</td><td>Feb-Apr 2026</td><td>GitHub API &rarr; release cadence analysis</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info" style="margin-top: 20px;">
+    <strong>About This Report</strong>
+    Generated on April 9, 2026 using vajra. All findings are based on publicly available data from the openclaw/openclaw GitHub repository. The narrow time window (3-4 days) of commit and PR data means this analysis captures a snapshot of current velocity rather than long-term trends. OpenClaw's extraordinary star count (353K) and fork count (71K) create governance challenges that no open-source project has fully solved at this scale. The concentric-rings trust model with explicit "maintainer" labels represents one of the most thoughtful approaches we have seen. The primary risk is not governance structure but review bandwidth: the project needs more trusted reviewers, not a different process.
+</div>
+
+<div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--slate-200);">
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgNTAiIGZpbGw9Im5vbmUiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJ2YWpyYUdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6I2Y1OWUwYiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNlZjQ0NDQiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxwb2x5Z29uIHBvaW50cz0iMjUsNSAzMCwyMCA0NSwyMCAzMywzMCAzNyw0NSAyNSwzNSAxMyw0NSAxNywzMCA1LDIwIDIwLDIwIiBmaWxsPSJ1cmwoI3ZhanJhR3JhZCkiLz4KICA8dGV4dCB4PSI1NSIgeT0iMzUiIGZvbnQtZmFtaWx5PSJzeXN0ZW0tdWksIG1vbm9zcGFjZSIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0idXJsKCN2YWpyYUdyYWQpIj52YWpyYTwvdGV4dD4KPC9zdmc+Cg==" style="width: 120px; opacity: 0.6;" alt="vajra">
+    <p class="dim" style="font-size: 7pt; margin-top: 8px;">Deterministic semantic reduction &mdash; vajra.dev</p>
+</div>
+
+</body>
+</html>
