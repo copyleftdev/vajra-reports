@@ -461,6 +461,9 @@ tbody tr:hover { background: #e0f7ff; }
     10 Meta engineers each contribute meaningfully. The top author (eps1lon at 23.4%) is replaceable within the team. Bus factor 80% ranges from 4 to 10 depending on the month. This is how corporate OSS should look.
 </div>
 
+<!-- ==================== GOVERNANCE TIMELINE ==================== -->
+<h1 style="page-break-before: always;">Governance Timeline &amp; Entropy</h1>
+
 <h2>The Entropy Dashboard</h2>
 <p>Shannon entropy measures contributor diversity. Higher = more distributed. React's entropy profile reveals the corporate monoculture pattern.</p>
 
@@ -476,10 +479,6 @@ tbody tr:hover { background: #e0f7ff; }
 <div class="callout callout-info">
     <strong>The 4.83-bit entropy gap</strong> between issues (8.54) and commits (3.71) quantifies the corporate monoculture. A massive global community depends on React and files issues, but only Meta employees write the code. This is structurally different from Effect-TS's gap (3.16 bits) &mdash; React's gap is larger because the user base is exponentially bigger.
 </div>
-
-<!-- ==================== GOVERNANCE TIMELINE ==================== -->
-<div class="page-break"></div>
-<h1>Governance Timeline</h1>
 
 <h2>Monthly Bus Factor &amp; Velocity</h2>
 <table style="font-size: 7.5pt;">
@@ -598,6 +597,25 @@ tbody tr:hover { background: #e0f7ff; }
 <div class="hbar-row"><div class="hbar-label">2026-03</div><div class="hbar-track"><div class="hbar-fill cyan" style="width:25%">41</div></div></div>
 <div class="hbar-row"><div class="hbar-label">2026-04</div><div class="hbar-track"><div class="hbar-fill slate" style="width:4%">6</div></div></div>
 
+<h2>Core Team Rotation Matrix</h2>
+<p>Unlike single-maintainer projects, React's leadership rotates naturally. The table below shows which engineer led each month and what they focused on.</p>
+
+<table>
+<thead><tr><th>Period</th><th>Lead</th><th>Focus Area</th><th>Community Impact</th></tr></thead>
+<tbody>
+<tr><td class="mono">Jul-Aug 2025</td><td>sebmarkbage + josephsavona</td><td>Server Components, Compiler</td><td>133 commits/month peak</td></tr>
+<tr><td class="mono">Sep-Oct 2025</td><td>eps1lon + sebmarkbage</td><td>React 19.2 release prep</td><td>164 commits, 22 authors</td></tr>
+<tr><td class="mono">Nov-Dec 2025</td><td>josephsavona + eps1lon</td><td>Stabilization, patch releases</td><td>Bus factor rises to 8</td></tr>
+<tr><td class="mono">Jan-Feb 2026</td><td>eps1lon</td><td>Testing infra, DX improvements</td><td>Steady 65-87 commits/month</td></tr>
+<tr><td class="mono">Mar-Apr 2026</td><td>eps1lon (distributed)</td><td>Compiler fault tolerance, ViewTransitions</td><td>Bus factor 10 &mdash; most distributed</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info">
+    <strong>vajra temporal trend: author entropy direction = stable (slope 0.037, R&#178; = 0.06)</strong>
+    The near-zero slope and low R&#178; confirm that contributor diversity neither grows nor shrinks &mdash; the same corporate team has been consistently building React for years. This is structural stability, not stagnation.
+</div>
+
 <!-- ==================== TWO-CLASS MERGE SYSTEM ==================== -->
 <div class="page-break"></div>
 <h1>The Two-Class Merge System</h1>
@@ -708,39 +726,41 @@ tbody tr:hover { background: #e0f7ff; }
     This is the benefit of being a salaried team: work happens during work hours.
 </div>
 
-<h2>The Effect-TS Contrast</h2>
-<div class="two-col">
-<div>
-<div class="callout callout-critical">
-    <strong>Effect-TS (unhealthy)</strong>
-    <ul style="margin-top: 6px; padding-left: 16px; font-size: 8pt;">
-        <li>Bus factor: <strong>1</strong></li>
-        <li>Top author: 32.9% of all code</li>
-        <li>59% one-commit contributors</li>
-        <li>3/3 burned-out contributors departed</li>
-        <li>13 min median self-merge</li>
-        <li>PR merge gap: 87x</li>
-    </ul>
+<h2 style="page-break-before: always;">The Effect-TS Contrast: Corporate vs Community OSS</h2>
+<p>Comparing React and Effect-TS reveals the structural differences between corporate-backed and community-driven open source projects. Both have 59.1% one-commit contributors, but the similarity ends there.</p>
+
+<table>
+<thead><tr><th>Metric</th><th>React (Corporate)</th><th>Effect-TS (Community)</th><th>Verdict</th></tr></thead>
+<tbody>
+<tr><td><strong>Bus Factor (80%)</strong></td><td class="grade-a"><strong>4-10</strong></td><td class="grade-f"><strong>1-2</strong></td><td class="grade-a">React: multi-engineer resilience</td></tr>
+<tr><td><strong>Top Author Share</strong></td><td class="grade-b">23.4%</td><td class="grade-f">32.9%</td><td class="grade-a">React: more distributed</td></tr>
+<tr><td><strong>Core Merge Rate</strong></td><td class="grade-a">72.5%</td><td class="grade-a">91.4%</td><td class="grade-b">Effect-TS: faster internal velocity</td></tr>
+<tr><td><strong>Community Merge Rate</strong></td><td class="grade-f">10.0%</td><td class="grade-c">45.9%</td><td class="grade-f">React: effectively closed</td></tr>
+<tr><td><strong>Merge Speed Gap</strong></td><td class="grade-c">15.9x</td><td class="grade-f">87x</td><td class="grade-c">Both poor, Effect-TS worse</td></tr>
+<tr><td><strong>Median Core Merge</strong></td><td>6.1 hours</td><td>13 minutes</td><td class="dim">Different workflows</td></tr>
+<tr><td><strong>Review Gate</strong></td><td class="grade-b">PR-based review</td><td class="grade-f">71% unreviewed</td><td class="grade-a">React: actual code review</td></tr>
+<tr><td><strong>Burnout Signals</strong></td><td class="grade-a">None detected</td><td class="grade-f">3/3 departed</td><td class="grade-a">React: salaried = sustainable</td></tr>
+<tr><td><strong>Commit Author Entropy</strong></td><td class="grade-b">3.71 bits</td><td class="grade-f">3.45 bits</td><td class="grade-b">Similar concentration</td></tr>
+<tr><td><strong>Issue Author Entropy</strong></td><td class="grade-a">8.54 bits</td><td class="grade-a">6.61 bits</td><td class="grade-a">React: massive community</td></tr>
+<tr><td><strong>Entropy Gap</strong></td><td class="grade-c">4.83 bits</td><td class="grade-c">3.16 bits</td><td class="grade-c">React: wider trust gap</td></tr>
+<tr><td><strong>Fix Rate</strong></td><td class="grade-c">22.8%</td><td class="grade-c">20.2%</td><td class="dim">Similar tech debt levels</td></tr>
+<tr><td><strong>One-Commit Contributors</strong></td><td class="grade-c">59.1%</td><td class="grade-c">59.1%</td><td class="dim">Identical (industry norm)</td></tr>
+<tr><td><strong>Governance Model</strong></td><td>Corporate BDFL (Meta)</td><td>Individual BDFL (Tim)</td><td class="dim">Same structure, different scale</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info">
+    <strong>The Paradox of Corporate Open Source</strong>
+    React is healthier on every governance metric (bus factor, burnout, review quality) but worse on community inclusion (10% vs 45.9% merge rate). Corporate backing solves the sustainability problem but creates a participation ceiling. Effect-TS's community can contribute but the project may not survive its maintainer. React will survive any individual departure but external contributions are unwelcome.
 </div>
-</div>
-<div>
-<div class="callout callout-good">
-    <strong>React (healthy)</strong>
-    <ul style="margin-top: 6px; padding-left: 16px; font-size: 8pt;">
-        <li>Bus factor: <strong>4-10</strong></li>
-        <li>Top author: 23.4% of all code</li>
-        <li>59% one-commit contributors</li>
-        <li>No burnout signals in core</li>
-        <li>6.1 hrs median merge time</li>
-        <li>PR merge gap: 15.9x</li>
-    </ul>
-</div>
-</div>
+
+<div class="callout callout-warning">
+    <strong>The 59.1% one-commit rate is universal.</strong>
+    Both projects &mdash; one with 244K stars and Meta backing, the other with 13.8K and a solo maintainer &mdash; show the exact same contributor retention rate. This suggests the problem is structural to open source itself, not specific to any project's governance.
 </div>
 
 <!-- ==================== ISSUE HEALTH ==================== -->
-<div class="page-break"></div>
-<h1>Issue Health &amp; Community Voice</h1>
+<h1 style="page-break-before: always;">Issue Health &amp; Community Voice</h1>
 
 <h2>Monthly Trend</h2>
 <table>
@@ -761,7 +781,12 @@ tbody tr:hover { background: #e0f7ff; }
 
 <div class="callout callout-warning">
     <strong>Issue response is deteriorating.</strong>
-    Close rate fell from 87% (Aug 2025) to 42% (Apr 2026). Zero-maintainer-response climbed from 50% to 95%. The stale-bot (github-actions) is the most frequent commenter on issues (181 comments), auto-closing issues that never received human attention.
+    Close rate fell from 87% (Aug 2025) to 42% (Apr 2026). Zero-maintainer-response climbed from 50% to 95%. The stale-bot (github-actions) is the most frequent commenter on issues (181 comments), auto-closing issues that never received human attention. Of the 500 issues sampled, <b>72.4%</b> received zero maintainer response, <b>27.8%</b> received zero comments at all, and <b>81</b> were labeled stale and auto-closed.
+</div>
+
+<div class="callout callout-info">
+    <strong>vajra drift analysis: PRs vs Issues &mdash; Severity: Critical</strong>
+    Structural similarity = <b>0.46</b> (less than half the fields overlap). JSD on author.login = <b>0.95</b> (near-maximum divergence). PRs and issues are filed by almost entirely different populations. The people building React are not the people using it.
 </div>
 
 <h2>Issue Categories</h2>
@@ -779,21 +804,8 @@ tbody tr:hover { background: #e0f7ff; }
 
 <p>Compiler and DevTools issues get special attention (100% and 75% close rates, zero orphans). Generic bugs languish &mdash; the team is focused on what Meta needs (compiler, server components), not community-reported issues.</p>
 
-<h2>The Stale Bot Problem</h2>
-<div class="stat-grid" style="grid-template-columns: 1fr 1fr 1fr;">
-    <div class="stat-box"><div class="val grade-f">72.4%</div><div class="desc">Zero Maintainer Response</div></div>
-    <div class="stat-box"><div class="val grade-c">27.8%</div><div class="desc">Zero Comments at All</div></div>
-    <div class="stat-box"><div class="val">81</div><div class="desc">Issues Labeled "Stale"</div></div>
-</div>
-
-<div class="callout callout-info">
-    <strong>vajra drift analysis: PRs vs Issues &mdash; Severity: Critical</strong>
-    Structural similarity between PR and issue schemas = <strong>0.46</strong> (less than half the fields overlap). Jensen-Shannon Divergence on author.login = <strong>0.95</strong> (near-maximum). PRs and issues are filed by almost entirely different populations. The people building React are not the people using it.
-</div>
-
 <!-- ==================== RELEASE HEALTH ==================== -->
-<div class="page-break"></div>
-<h1>Release Cadence &amp; Stability</h1>
+<h1 style="page-break-before: always;">Release Cadence &amp; Stability</h1>
 
 <h2>React 19.x Release Timeline</h2>
 <table>
@@ -870,8 +882,7 @@ tbody tr:hover { background: #e0f7ff; }
 </div>
 
 <!-- ==================== PR vs ISSUE DRIFT ==================== -->
-<div class="page-break"></div>
-<h1>PR vs Issue Drift Analysis</h1>
+<h1 style="page-break-before: always;">PR vs Issue Drift Analysis</h1>
 
 <h2>Two Different Worlds</h2>
 <p>vajra's drift analysis compares the PR population with the issue population. The results reveal two almost entirely separate communities.</p>
@@ -908,6 +919,26 @@ tbody tr:hover { background: #e0f7ff; }
 </table>
 
 <p>josephsavona leads issue engagement with 143 comments (vs 69 PRs), showing active community communication focused on compiler feedback. The stale bot&rsquo;s 181 comments (highest) is a concerning signal &mdash; it means more issues are auto-closed than receive any human response.</p>
+
+<h2>Invariant Analysis: What Predicts What?</h2>
+<p>vajra's invariant detection reveals the strongest field-to-field relationships in the data, exposing the hidden rules of how React's development works.</p>
+
+<table>
+<thead><tr><th>Invariant</th><th>Strength</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td>author.login &rarr; state</td><td class="num grade-a"><strong>0.655</strong></td><td>Who you are strongly predicts whether your PR merges</td></tr>
+<tr><td>additions &rarr; deletions</td><td class="num"><strong>0.812</strong></td><td>Larger additions correlate with larger deletions (refactoring pattern)</td></tr>
+<tr><td>title &rarr; author.id</td><td class="num"><strong>0.966</strong></td><td>PR titles are highly author-specific (specialization)</td></tr>
+<tr><td>closedAt &rarr; mergedAt</td><td class="num grade-a"><strong>1.000</strong></td><td>Perfect: closed PRs always have consistent merge state</td></tr>
+<tr><td>author.id &rarr; labels</td><td class="num"><strong>0.542</strong></td><td>Core team PRs get specific labels automatically</td></tr>
+<tr><td>additions &rarr; state</td><td class="num grade-c"><strong>0.555</strong></td><td>PR size weakly predicts outcome (large PRs more likely rejected)</td></tr>
+</tbody>
+</table>
+
+<div class="callout callout-info">
+    <strong>The "who you are" invariant (0.655) is the quantitative proof of the two-class system.</strong>
+    In a meritocratic project, author identity should have low predictive power over merge outcomes &mdash; code quality should matter more than who wrote it. In React, knowing the author gives you 65.5% information about the outcome, confirming that organizational membership is the primary merge gate.
+</div>
 
 <!-- ==================== METHODOLOGY ==================== -->
 <div class="page-break"></div>
